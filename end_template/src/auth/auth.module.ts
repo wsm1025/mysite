@@ -10,6 +10,8 @@ import { JwtStorage } from './jwt.strategy'; // 自定义的jwt策略
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserService } from 'src/modules/user/user.service';
+import { Dictionary } from 'src/modules/dictionary/entities/dictionary.entity';
+import { DictionaryService } from 'src/modules/dictionary/dictionary.service';
 
 // 这里不建议将秘钥写死在代码也， 它应该和数据库配置的数据一样，从环境变量中来
 const jwtModule = JwtModule.registerAsync({
@@ -23,9 +25,19 @@ const jwtModule = JwtModule.registerAsync({
 });
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), PassportModule, jwtModule],
+  imports: [
+    TypeOrmModule.forFeature([User, Dictionary]),
+    PassportModule,
+    jwtModule,
+  ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStorage, JwtStorage, UserService],
+  providers: [
+    AuthService,
+    LocalStorage,
+    JwtStorage,
+    UserService,
+    DictionaryService,
+  ],
   exports: [jwtModule],
 })
 export class AuthModule {}

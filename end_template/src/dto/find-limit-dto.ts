@@ -6,4 +6,7 @@ export class FindLimitDto {
 
   @ApiProperty({ description: 'size' })
   size?: number = 10;
+
+  @ApiProperty({ description: 'keyWord' })
+  keyWord?: string = '';
 }
