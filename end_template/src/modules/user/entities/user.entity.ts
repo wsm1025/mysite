@@ -10,8 +10,8 @@ import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 
 export enum UserRoleEnum {
-  User = 'user',
-  Admin = 'admin',
+  USER = 'ROLE_USER',
+  ADMIN = 'ROLE_ADMIN',
 }
 @Entity('user')
 export class User {
@@ -30,7 +30,7 @@ export class User {
 
   @Exclude()
   @Column({ comment: '密码', length: 100 })
-  password: string;
+  passWord: string;
 
   @Column({ comment: '邮箱', nullable: true, length: 20 })
   email: string;
@@ -48,7 +48,7 @@ export class User {
   @Column('simple-enum', {
     enum: UserRoleEnum,
     comment: '角色',
-    default: UserRoleEnum.User,
+    default: UserRoleEnum.USER,
   })
   role: string;
 
@@ -68,8 +68,8 @@ export class User {
 
   @Exclude()
   @Column({
-    name: 'delete_flag',
-    comment: '标签状态 -1:删除 0:启用',
+    name: 'is_delete',
+    comment: '标签状态 0:未删除 1:删除',
     type: 'int',
     default: 0,
   })
@@ -77,8 +77,8 @@ export class User {
 
   @BeforeInsert()
   async encryptPwd() {
-    if (!this.password) return;
-    this.password = await bcrypt.hashSync(this.password);
+    if (!this.passWord) return;
+    this.passWord = await bcrypt.hashSync(this.passWord);
   }
   // 都会执行
   @BeforeInsert()

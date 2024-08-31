@@ -8,7 +8,7 @@ export class CreateUserDto {
 
   @ApiProperty({ description: '密码' })
   @IsNotEmpty({ message: '密码不能为空' })
-  password: string;
+  passWord: string;
 
   @ApiProperty({ description: '用户角色' })
   role: string;

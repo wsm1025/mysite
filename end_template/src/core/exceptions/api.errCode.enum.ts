@@ -16,6 +16,8 @@ export enum ApiErrCode {
   NO_PERMISSIN = 10011,
   /** 数据字典存在重复数据 */
   DICTIONARY_EXIST = 10013,
+  /**  操作失败 */
+  OPERATION_FAILED = 10014,
 }
 
 const apiErrMsgMap = {
@@ -26,6 +28,7 @@ const apiErrMsgMap = {
   [ApiErrCode.PASSWORD_ERROR]: '密码错误',
   [ApiErrCode.NO_PERMISSIN]: '权限不足',
   [ApiErrCode.DICTIONARY_EXIST]: '数据字典存在重复数据',
+  [ApiErrCode.OPERATION_FAILED]: '操作失败',
 };
 
 export { apiErrMsgMap };

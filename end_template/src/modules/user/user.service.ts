@@ -3,9 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiException, ApiErrCode } from '../../core/exceptions/api.exception';
-import { User } from './entities/user.entity';
+import { User, UserRoleEnum } from './entities/user.entity';
 import { ListUserDto } from './dto/user-info.dto';
-import axios from 'axios';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -61,18 +60,14 @@ export class UserService {
       message: '更新成功',
     };
   }
-  async delete(op, userId) {
-    // 查询 token信息 是否有权限
-    if (op.role !== 'admin') {
-      throw new ApiException(ApiErrCode.NO_PERMISSIN);
-    }
+  async delete(userId) {
     const user = await this.userRepository.findOne({
       where: { userId },
     });
     if (!user) {
       throw new ApiException(ApiErrCode.USER_NOT_EXIST);
     }
-    if (user.role === 'admin') {
+    if (user.role !== UserRoleEnum.ADMIN) {
       throw new ApiException(ApiErrCode.NO_PERMISSIN);
     }
     await this.userRepository.update({ userId }, { deleteFlag: 1 });
@@ -107,37 +102,5 @@ export class UserService {
       where: { userId },
     });
     return userInfo;
-  }
-
-  async getWebToken(appKey: string) {
-    const get = async () => {
-      console.log(1);
-      try {
-        const data = await axios({
-          url: 'http://taizonga.top:3333/api/public/thirdConfigurationPrivder',
-          method: 'post',
-          data: {
-            appKey,
-          },
-          timeout: 2000,
-        });
-        return data.data.data;
-      } catch (error) {
-        console.log(error);
-        if (!error.response) {
-          return {
-            code: 400,
-            msg: '请求超时',
-          };
-        } else if (error.response.data.text == '该appKey已无使用次数') {
-          return {
-            code: 400,
-            msg: '该appKey已无使用次数',
-          };
-        }
-        return get();
-      }
-    };
-    return get();
   }
 }

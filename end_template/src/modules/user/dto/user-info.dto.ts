@@ -31,5 +31,5 @@ export class UserInfoDto {
   updateTime: Date;
 
   @ApiProperty({ description: '用户Id' })
-  userId?: string;
+  userId: string;
 }

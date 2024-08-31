@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import envConfig from '../config/env';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { DictionaryModule } from './modules/dictionary/dictionary.module';
@@ -35,7 +33,7 @@ import { DictionaryModule } from './modules/dictionary/dictionary.module';
     UserModule,
     DictionaryModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

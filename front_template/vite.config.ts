@@ -3,7 +3,6 @@ import vue from "@vitejs/plugin-vue";
 import path from "path";
 import Components from "unplugin-vue-components/vite";
 import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
-import { viteMockServe } from "vite-plugin-mock";
 import setupConfig from "./config";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import viteCompression from "vite-plugin-compression";

@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -14,53 +13,57 @@ import {
 } from '@nestjs/common';
 import { DictionaryService } from './dictionary.service';
 import { CreateDictionaryDto } from './dto/create-dictionary.dto';
-import { UpdateDictionaryDto } from './dto/update-dictionary.dto';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { ListDicDto } from './dto/dictionary-info.dto';
-import { StatusType } from './entities/dictionary.entity';
+import { RoleInterceptor } from 'src/core/interceptor/user.interceptor';
+import { UserRoleEnum } from '../user/entities/user.entity';
 
 @ApiTags('字典值')
 @Controller('dictionary')
 export class DictionaryController {
   constructor(private readonly dictionaryService: DictionaryService) {}
 
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: '新建字典' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('createDic')
-  create(@Body() createDictionaryDto: CreateDictionaryDto) {
-    return this.dictionaryService.create(createDictionaryDto);
+  create(@Body() createDictionaryDto: CreateDictionaryDto, @Req() req) {
+    return this.dictionaryService.create(createDictionaryDto, req.user);
   }
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwt'))
+
+  @ApiOperation({ summary: '查找单个字典' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/find/:id')
   findOne(@Param('id') id: string) {
     return this.dictionaryService.findOne(id);
   }
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(ClassSerializerInterceptor)
-  @Get('list')
-  findByPage(@Query() query: ListDicDto) {
-    return this.dictionaryService.findAll(query);
-  }
+
+  @ApiOperation({ summary: '查找所有字典' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('findAll')
+  findAll(@Query('parentType') parentType, @Query('keyWord') keyWord?: string) {
+    return this.dictionaryService.findAll(parentType, keyWord);
+  }
+
+  @ApiOperation({ summary: '删除字典' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(new RoleInterceptor(UserRoleEnum.USER))
   @Delete('/delete/:id')
   updateDelete(@Req() req, @Param('id') id: string) {
     return this.dictionaryService.updateDelete(req.user, id);
   }
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwt'))
-  @Post('/status/:id')
-  updateStatus(@Param('id') id: string, @Body('status') status: StatusType) {
-    return this.dictionaryService.updateStatus(id, status);
+
+  @ApiOperation({ summary: '更新字典某些值' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/field/:id')
+  updateField(@Param('id') id: string, @Body() body) {
+    return this.dictionaryService.updateField(id, body);
   }
 }

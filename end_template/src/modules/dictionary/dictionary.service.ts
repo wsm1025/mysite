@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateDictionaryDto } from './dto/create-dictionary.dto';
 import { UpdateDictionaryDto } from './dto/update-dictionary.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Dictionary, StatusType } from './entities/dictionary.entity';
+import { Dictionary } from './entities/dictionary.entity';
 import { Repository } from 'typeorm';
 import { ApiException, ApiErrCode } from '../../core/exceptions/api.exception';
-import { ListDicDto } from './dto/dictionary-info.dto';
-import { UserRoleEnum } from '../user/entities/user.entity';
+import { UserInfoDto } from '../user/dto/user-info.dto';
 
 @Injectable()
 export class DictionaryService {
@@ -14,9 +13,11 @@ export class DictionaryService {
     @InjectRepository(Dictionary)
     private dictionaryRepository: Repository<Dictionary>,
   ) {}
-  async create(createDictionaryDto: CreateDictionaryDto) {
+  async create(
+    createDictionaryDto: CreateDictionaryDto,
+    userInfo: UserInfoDto,
+  ) {
     const { dictionaryValue, dictionaryName } = createDictionaryDto;
-    console.log(dictionaryValue, dictionaryName);
     // 使用 OR 条件来查找
     const exist = await this.dictionaryRepository.findOne({
       where: [
@@ -27,9 +28,13 @@ export class DictionaryService {
     if (exist) {
       throw new ApiException(ApiErrCode.DICTIONARY_EXIST);
     }
-    const newDic = await this.dictionaryRepository.create(createDictionaryDto);
+    const newDic = await this.dictionaryRepository.create({
+      ...createDictionaryDto,
+      createBy: userInfo.userId,
+      updateBy: userInfo.userId,
+    });
     await this.dictionaryRepository.save(newDic);
-    return {};
+    return null;
   }
 
   async findOne(id: string) {
@@ -37,7 +42,7 @@ export class DictionaryService {
       where: [{ id, isDelete: '0' }],
     });
     if (!column || column.parentId) {
-      return column ?? [];
+      return column ?? null;
     } else {
       const children = await this.dictionaryRepository.find({
         where: [{ parentId: column.id, isDelete: '0' }],
@@ -46,54 +51,88 @@ export class DictionaryService {
     }
   }
 
-  async findAll(query: ListDicDto) {
-    const search = {
-      isDelete: '0', // 查询未删除的
-      keyword: query.keyWord ? query.keyWord : undefined,
-    };
+  async findAll(parentType = '0,1', keyWord?: string) {
+    const splitParentType = parentType.split(',');
 
-    // 获取字典列表和总数
-    const [dictionaryList, total] =
-      await this.dictionaryRepository.findAndCount({
-        where: search,
-        order: { createTime: 'DESC' },
+    // 初始化查询条件
+    const query = this.dictionaryRepository
+      .createQueryBuilder('dictionary')
+      .where('dictionary.isDelete = :isDelete', { isDelete: '0' });
+
+    // 处理 parentType 查询
+    if (splitParentType.length === 1) {
+      query.andWhere('dictionary.parentType = :parentType', {
+        parentType: splitParentType[0],
       });
-    // 创建一个 Map 以快速查找每个项
-    const itemMap = new Map();
-    dictionaryList.forEach((item) => itemMap.set(item.id, item));
+    } else if (splitParentType.length === 2) {
+      query.andWhere('dictionary.parentType IN (:...parentTypes)', {
+        parentTypes: splitParentType,
+      });
+    }
 
-    // 处理子项
-    dictionaryList.forEach((item) => {
-      if (item.parentId) {
-        const parent = itemMap.get(item.parentId);
-        if (parent) {
-          if (!parent.children) {
-            parent.children = [];
+    // 处理关键字查询
+    if (keyWord) {
+      query.andWhere(
+        '(dictionary.dictionaryName LIKE :keyWord OR dictionary.dictionaryValue LIKE :keyWord)',
+        { keyWord: `%${keyWord}%` },
+      );
+    }
+
+    let columns = await query.getMany();
+
+    if (splitParentType?.length === 2) {
+      columns
+        .filter((item) => item.parentId)
+        .forEach((item) => {
+          const parent = columns.find(
+            (parent) => parent.id === item.parentId,
+          ) as any;
+          if (parent) {
+            if (!parent.children) {
+              parent.children = [];
+            }
+            parent.children.push(item);
           }
-          parent.children.push(item);
-        }
-      }
-    });
-    // 释放 itemMap
-    itemMap.clear();
-    // 获取所有父项
-    const parentList = dictionaryList.filter((item) => !item.parentId);
+        });
+      columns = columns.filter((item) => !item.parentId);
+    }
     return {
-      parentList,
-      parentTotal: parentList.length,
-      total,
+      columns,
+      total: columns.length,
     };
   }
 
   async updateDelete(user, id: string) {
-    if (user.role !== UserRoleEnum.Admin) {
-      throw new ApiException(ApiErrCode.NO_PERMISSIN);
-    }
-    await this.dictionaryRepository.update({ id }, { isDelete: '1' });
-    return {};
+    const column = await this.dictionaryRepository.update(
+      { id },
+      { isDelete: '1' },
+    );
+    if (column.affected == 0)
+      throw new ApiException(ApiErrCode.OPERATION_FAILED);
+    return null;
   }
-  async updateStatus(id: string, status: StatusType) {
-    await this.dictionaryRepository.update({ id }, { status });
-    return {};
+
+  async updateField(id: string, body: UpdateDictionaryDto) {
+    const {
+      dictionaryName,
+      dictionaryDesc,
+      status,
+      parentId,
+      parentType,
+      remark,
+    } = body;
+
+    const updateData: UpdateDictionaryDto = {
+      ...(dictionaryName && { dictionaryName }),
+      ...(dictionaryDesc && { dictionaryDesc }),
+      ...(status && { status }),
+      ...(parentId && { parentId }),
+      ...(parentType && { parentType }),
+      ...(remark && { remark }),
+    };
+    const column = await this.dictionaryRepository.update({ id }, updateData);
+    if (column.affected === 0)
+      throw new ApiException(ApiErrCode.OPERATION_FAILED);
+    return null;
   }
 }

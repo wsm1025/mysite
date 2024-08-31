@@ -21,6 +21,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/roles/roles.guard';
+import { UserRoleEnum } from './entities/user.entity';
+import { RoleInterceptor } from 'src/core/interceptor/user.interceptor';
 
 @ApiTags('用户')
 @Controller('user')
@@ -48,10 +50,11 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(ClassSerializerInterceptor) // 不包含密码 @Exclude()的字段
+  @UseInterceptors(new RoleInterceptor(UserRoleEnum.ADMIN))
   @Post('delete')
   @UseGuards(RolesGuard)
-  delete(@Req() req, @Body('userId') userId) {
-    return this.userService.delete(req.user, userId);
+  delete(@Body('userId') userId) {
+    return this.userService.delete(userId);
   }
 
   @ApiOperation({ summary: '获取全部用户信息' })
@@ -70,11 +73,5 @@ export class UserController {
   @Get('detail')
   async getUserInfo(@Req() req) {
     return this.userService.findOne(req.param.userId);
-  }
-
-  @ApiOperation({ summary: '获取网络上传信息' })
-  @Get('getWebToken')
-  async getWebToken(@Query('appKey') appKey: string) {
-    return this.userService.getWebToken(appKey);
   }
 }

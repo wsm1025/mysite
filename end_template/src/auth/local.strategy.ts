@@ -27,7 +27,7 @@ export class LocalStorage extends PassportStrategy(Strategy) {
       throw new ApiException(ApiErrCode.USER_NOT_EXIST);
     }
 
-    if (!compareSync(password, user.password)) {
+    if (!compareSync(password, user.passWord)) {
       // 对比密码 如果不正确，抛出异常
       throw new ApiException(ApiErrCode.PASSWORD_ERROR);
     }
