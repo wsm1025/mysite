@@ -7,7 +7,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger, ValidationPipe } from '@nestjs/common';
 
 const PREFIX = 'docs';
-const POST = 8888;
+const POST = 3000;
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix('api'); // 设置全局路由前缀
@@ -34,7 +34,6 @@ async function bootstrap() {
     credentials: true,
   }); // 允许跨域
   await app.listen(POST, () => {
-    // console.log(process.env.NODE_ENV, 'process.env.NODE_ENV');
     Logger.log(`服务已经启动,接口请访问:http://localhost:${POST}/${PREFIX}`);
   });
 }

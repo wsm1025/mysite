@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { UserRoleEnum } from '../../modules/user/entities/user.entity';
 import { ApiErrCode, ApiException } from '../exceptions/api.exception';

@@ -8,5 +8,5 @@ export class LoginDto {
 
   @ApiProperty({ description: '密码' })
   @IsNotEmpty({ message: '请输入密码' })
-  password: string;
+  passWord: string;
 }

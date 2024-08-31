@@ -73,6 +73,7 @@
         "gulp-uglify": "^3.0.2",
         "less": "^4.2.0",
         "naive-ui": "^2.34.4",
+        "prettier": "^3.3.3",
         "rollup-plugin-visualizer": "^5.9.2",
         "typescript": "^5.0.2",
         "unplugin-auto-import": "^0.16.6",

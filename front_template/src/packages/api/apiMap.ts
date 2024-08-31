@@ -1,6 +1,6 @@
 export default {
-    login:"/login",
-    register:"/register",
-    menus:"/menus",
-    userInfo:"/userInfo"
+    login: "/auth/login",
+    register: "/user/register",
+    menus: "/menus/list",
+    userInfo: "/user/userInfo",
 }

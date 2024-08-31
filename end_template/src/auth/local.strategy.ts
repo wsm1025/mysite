@@ -14,7 +14,7 @@ export class LocalStorage extends PassportStrategy(Strategy) {
     // 如果不是userName、password， 在constructor中配置
     super({
       usernameField: 'userName',
-      passwordField: 'password',
+      passwordField: 'passWord',
     } as IStrategyOptions);
   }
 

@@ -30,7 +30,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: '注册用户' })
-  @ApiResponse({ status: 200, type: UserInfoDto })
   @UseInterceptors(ClassSerializerInterceptor) // 不包含密码 @Exclude()的字段
   @Post('register')
   register(@Body() createUser: CreateUserDto) {
@@ -70,7 +69,7 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(ClassSerializerInterceptor) // 不包含密码 @Exclude()的字段
-  @Get('detail')
+  @Get('userInfo')
   async getUserInfo(@Req() req) {
     return this.userService.findOne(req.param.userId);
   }

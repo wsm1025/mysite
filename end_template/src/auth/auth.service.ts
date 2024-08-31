@@ -22,8 +22,7 @@ export class AuthService {
       userName,
       role,
     });
-    const userInfo = await this.getUser(user);
-    return { token, userInfo };
+    return { token };
   }
 
   getUser(user) {
