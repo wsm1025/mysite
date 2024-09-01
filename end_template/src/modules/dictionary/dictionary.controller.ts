@@ -16,7 +16,7 @@ import { CreateDictionaryDto } from './dto/create-dictionary.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleInterceptor } from 'src/core/interceptor/user.interceptor';
-import { UserRoleEnum } from '../user/entities/user.entity';
+import { USERROLRTYPE } from 'src/enum';
 
 @ApiTags('字典值')
 @Controller('dictionary')
@@ -53,17 +53,17 @@ export class DictionaryController {
   @ApiOperation({ summary: '删除字典' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(new RoleInterceptor(UserRoleEnum.USER))
-  @Delete('/delete/:id')
-  updateDelete(@Req() req, @Param('id') id: string) {
-    return this.dictionaryService.updateDelete(req.user, id);
+  @UseInterceptors(new RoleInterceptor(USERROLRTYPE.ADMIN))
+  @Post('/delete')
+  updateDelete(@Body('id') id: string) {
+    return this.dictionaryService.updateDelete(id);
   }
 
   @ApiOperation({ summary: '更新字典某些值' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @Post('/field/:id')
-  updateField(@Param('id') id: string, @Body() body) {
-    return this.dictionaryService.updateField(id, body);
+  @Post('/field')
+  updateField(@Body() body) {
+    return this.dictionaryService.updateField(body);
   }
 }

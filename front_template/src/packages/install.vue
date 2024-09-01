@@ -1,11 +1,15 @@
 <template>
-    <n-config-provider :theme="darkTheme" :theme-overrides="themeOverrides" :locale="locale"
-                       :date-locale="dateLocale">
+    <n-config-provider
+        :theme="darkTheme"
+        :theme-overrides="themeOverrides"
+        :locale="locale"
+        :date-locale="dateLocale"
+    >
         <n-notification-provider>
             <n-dialog-provider>
-                <NotificationApi/>
+                <NotificationApi />
                 <n-message-provider>
-                    <MessageApi/>
+                    <MessageApi />
                     <router-view></router-view>
                 </n-message-provider>
             </n-dialog-provider>
@@ -13,13 +17,13 @@
     </n-config-provider>
 </template>
 <script lang="ts">
-import {computed, defineComponent, reactive} from "vue"
-import {darkTheme, GlobalThemeOverrides} from "naive-ui"
-import {zhCN, dateZhCN} from "naive-ui"
+import { computed, defineComponent, reactive } from "vue"
+import { darkTheme, GlobalThemeOverrides } from "naive-ui"
+import { zhCN, dateZhCN } from "naive-ui"
 import appStore from "@/packages/pinia/app.ts"
-import type {App} from "vue"
-import {readonly} from "vue"
-import mitt, {Emitter} from "mitt"
+import type { App } from "vue"
+import { readonly } from "vue"
+import mitt, { Emitter } from "mitt"
 import mergeWith from "lodash/mergeWith.js"
 import cloneDeep from "lodash/mergeWith.js"
 import isArray from "lodash/isArray.js"
@@ -28,8 +32,8 @@ import setupGlobal from "@/packages/global"
 import setupPinia from "@/packages/pinia"
 import config from "@/packages/config"
 import setupIcons from "@/packages/config/icon.ts"
-import {axios} from "@/packages/http/request.ts"
-import router, {setupRouter} from "@/packages/router"
+import { axios } from "@/packages/http/request.ts"
+import router, { setupRouter } from "@/packages/router"
 import setupComponents from "@/packages/components"
 import Message from "@/packages/layout/components/Message.vue"
 import Notification from "@/packages/layout/components/Notification.vue"
@@ -44,7 +48,11 @@ function customizer(objValue, srcValue) {
 }
 
 const install = (app: App, options?: any) => {
-    const configOptions = mergeWith(cloneDeep(config), cloneDeep(options), customizer) // 合并值
+    const configOptions = mergeWith(
+        cloneDeep(config),
+        cloneDeep(options),
+        customizer
+    ) // 合并值
     app.config.globalProperties["configOptions"] = configOptions
     app.provide("configOptions", readonly(configOptions))
     app.provide("$mitt", emitter)
@@ -56,18 +64,12 @@ const install = (app: App, options?: any) => {
     setupComponents(app)
 }
 
-export {
-    install,
-    axios,
-    router,
-    setupRouter,
-    locaStore
-}
+export { install, axios, router, setupRouter, locaStore }
 
 export default defineComponent({
     components: {
         MessageApi: Message,
-        NotificationApi: Notification
+        NotificationApi: Notification,
     },
     setup() {
         const app = appStore()
@@ -75,18 +77,20 @@ export default defineComponent({
             common: {
                 primaryColor: computed(() => app.userSetting.themeColor),
                 primaryColorHover: computed(() => app.userSetting.themeColor),
-                progressRailColor: computed(() => app.userSetting.themeColor)
+                progressRailColor: computed(() => app.userSetting.themeColor),
             },
         })
         return {
-            darkTheme: computed(() => app.userSetting.themeName ? darkTheme : null),
+            darkTheme: computed(() =>
+                app.userSetting.themeName ? darkTheme : null
+            ),
             themeOverrides,
-            locale: computed(() => app.userSetting.language ? zhCN : null),
-            dateLocale: computed(() => app.userSetting.language ? dateZhCN : null),
+            locale: computed(() => (app.userSetting.language ? zhCN : null)),
+            dateLocale: computed(() =>
+                app.userSetting.language ? dateZhCN : null
+            ),
         }
-    }
+    },
 })
 </script>
-<style lang="less">
-
-</style>
+<style lang="less"></style>

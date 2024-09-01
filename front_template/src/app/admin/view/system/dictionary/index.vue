@@ -2,137 +2,203 @@
     <n-grid cols="24" x-gap="10" item-responsive responsive="screen">
         <n-grid-item span="24 m:24 l:24">
             <n-space :wrap-item="false">
-                <n-card :segmented="{content: true,footer:true}" header-style="padding:0px 0px;border:none"
-                        footer-style="padding:10px"
-                        content-style="padding:0px 0px;border:none">
-                    <template #header-extra>
-                        <n-button color="#52C41A" @click="compHandle.add()">新增数据</n-button>
-                    </template>
+                <n-card
+                    :segmented="{ content: true, footer: true }"
+                    header-style="padding:0px 0px;border:none"
+                    footer-style="padding:10px"
+                >
                     <template #header>
-                        <n-tabs @update:value="compHandle.tabUpdate" type="line" v-model:value="compData.tabValue"
-                                :tabs-padding="20" tab-style="padding:15px 0px">
-                            <n-tab :name="item.label" v-for="(item,idx) in compData.tabsOptions" :key="idx">
-                                {{ item.label }}
-                            </n-tab>
-                        </n-tabs>
+                        <n-space justify="start" style="padding: 10px">
+                            <n-button type="primary" @click="handle(TYPE.ADD)">
+                                新增
+                            </n-button>
+                            <n-input
+                                placeholder="搜索"
+                                v-model:value="keyWord"
+                                @blur="init"
+                            >
+                                <template #prefix>
+                                    <n-icon :component="FlashOutline" />
+                                </template>
+                            </n-input>
+                        </n-space>
                     </template>
                     <n-data-table
-                        :bordered="false"
-                        :bottom-bordered="false"
-                        :columns="compData.columns"
-                        :data="compData.tableData"
-                        :pagination="compData.pagination"
-                        :single-line="false"
-                        :loading="compData.loading"
-                        :size="compData.tableSizeValue"
-                        :row-key="compData.rowKey"
-                        @update:checked-row-keys="compHandle.check"
-                        :default-expanded-row-keys="[200]"
+                        :columns="columns"
+                        :data="tableData"
+                        :loading="loading"
+                        default-expand-all
+                        :rowKey="(row) => row.id"
+                        :pagination="pagination"
                     />
-                    <template #footer>
-                        <n-pagination
-                            v-model:page="compData.tablePage"
-                            :page-count="1"
-                            size="large"
-                            show-quick-jumper
-                            show-size-picker
-                            style="justify-content: flex-end;flex: 1"
-                        />
-                    </template>
                 </n-card>
+                <Modal ref="modelRef" @success="() => init()" />
             </n-space>
         </n-grid-item>
     </n-grid>
 </template>
 
-<script lang="ts">
-import {defineComponent, reactive, ref} from "vue"
-import {useMessage} from "naive-ui"
-import type {FormInst} from "naive-ui"
-import {dictionary} from "@/app/admin/api/app.ts"
-import {createColumns, treeData, tableSize, tabsOptions} from "./data.ts"
-import {useRouter} from "vue-router"
+<script lang="ts" setup>
+import { onMounted, Ref, ref, h } from "vue"
+import { NSwitch, NButton, NSpace, NPopconfirm } from "naive-ui"
+import { FlashOutline } from "@vicons/ionicons5"
+import {
+    dictionaryAll,
+    dictionaryFiled,
+    createDic,
+    findDicById,
+    deleteDicById,
+} from "@api/app"
+import dayjs from "dayjs"
+import Modal from "./components/modal.vue"
+import { TYPE } from "./components/enum.ts"
+const tabData: Ref<Array<{ name: string; value: string }>> = ref([])
+const tableData = ref([])
 
-export default defineComponent({
-    setup() {
-        const router = useRouter()
-        const searchFormRef = ref<FormInst | null>(null)
-        const message = useMessage()
-        const compData = reactive({
-            tableData: [],
-            tablePage: 1,
-            tableSizeValue: "medium",
-            tableSize,
-            loading: true,
-            treeData,
-            columns: [],
-            sourceColumns: [],
-            columnsOptions: [],
-            columnsOptionsValue: [],
-            searchForm: {userName: ""},
-            pagination: false,
-            rowKey: (row: any) => row.id,
-            checkedRowKeys: [],
-            tabValue: tabsOptions[0].label,
-            tabsOptions
-        })
-        const compHandle = reactive({
-            getTableData() {
-                compData.loading = true
-                dictionary().then((res) => {
-                    compData.tableData = res.data
-                }).finally(() => {
-                    compData.loading = false
-                })
-            },
-            del(row) {
-                message.success(`模拟演示，删除成功，${row.id}`)
-            },
-            dels() {
-                if (compData.checkedRowKeys.length) {
-                    message.success(`模拟演示，删除成功，${compData.checkedRowKeys.join(",")}`)
-                } else {
-                    message.warning("请选择要删除的项")
-                }
-            },
-            edit(row: any) {
-                router.push("/system/dictionary/edit/" + row.id)
-            },
-            add() {
-                router.push("/system/dictionary/add")
-            },
-            check(rowKeys: any) {
-                compData.checkedRowKeys = rowKeys
-            },
-            tableSize() {
+const loading: Ref<boolean> = ref(false)
+const keyWord: Ref<string> = ref("")
 
-            },
-            handleColumnsOptions(value: (string | number)[]) {
-                compData.columns = compData.sourceColumns.filter((item) => value.indexOf(item.key) !== -1)
-            },
-            search() {
-                message.success("模拟演示搜索")
-            },
-            tabUpdate(value: string | number) {
-                message.success(value)
-                compHandle.getTableData()
-            }
-        })
-        compData.sourceColumns = createColumns({compHandle})
-        compData.columns = compData.sourceColumns
-        compData.columnsOptionsValue = compData.sourceColumns.map((item) => item.key)
-        compData.columnsOptions = compData.sourceColumns.filter((item) => item.type !== "selection").map((item) => {
-            if (item.key === "actions") {
-                item.disabled = true
-            }
-            return item
-        })
-        compHandle.getTableData()
-        return {
-            searchFormRef,
-            compData,
-            compHandle,
-        }
-    }
+const columns = ref([
+    {
+        title: "字典名称",
+        key: "dictionaryName",
+    },
+    {
+        title: "字典值",
+        key: "dictionaryValue",
+    },
+    {
+        title: "字典描述",
+        key: "dictionaryDesc",
+        render: ({ dictionaryDesc }) => {
+            return dictionaryDesc || "-"
+        },
+    },
+    {
+        title: "创建时间",
+        key: "createTime",
+        render: ({ createTime }) => {
+            return dayjs(createTime).format("YYYY-MM-DD HH:mm:ss") || "-"
+        },
+    },
+    {
+        title: "更新时间",
+        key: "updateTime",
+        render: ({ updateTime }) => {
+            return dayjs(updateTime).format("YYYY-MM-DD HH:mm:ss") || "-"
+        },
+    },
+    {
+        title: "创建人",
+        key: "createBy",
+        render: ({ createBy }) => {
+            return createBy || "-"
+        },
+    },
+    {
+        title: "更新人",
+        key: "updateBy",
+        render: ({ updateBy }) => {
+            return updateBy || "-"
+        },
+    },
+    {
+        title: "状态",
+        key: "status",
+        render(row) {
+            return h(NSwitch, {
+                value: row.status == 0,
+                size: "small",
+                onUpdateValue: async (value) => {
+                    await dictionaryFiled({
+                        status: String(Number(!value)),
+                        id: row.id,
+                    })
+                    init()
+                },
+            })
+        },
+    },
+    {
+        title: "操作",
+        key: "action",
+        render(row) {
+            return [
+                h(
+                    NButton,
+                    {
+                        type: "info",
+                        size: "small",
+                        onClick: async () => {
+                            const data = await findDicById(row.id)
+                            handle(TYPE.EDIT, data)
+                        },
+                        style: {
+                            marginRight: "4px",
+                        },
+                    },
+                    {
+                        default: () => "编辑",
+                    }
+                ),
+                h(
+                    NPopconfirm,
+                    {
+                        positiveText: "确定",
+                        negativeText: "取消",
+                        onPositiveClick: async () => {
+                            await deleteDicById({ id: row.id, isDelete: "1" })
+                            init()
+                        },
+                    },
+                    {
+                        trigger: () =>
+                            h(
+                                NButton,
+                                {
+                                    type: "error",
+                                    size: "small",
+                                },
+                                {
+                                    default: () => "删除",
+                                }
+                            ),
+                        default: () => "确定删除吗？",
+                    }
+                ),
+            ]
+        },
+    },
+])
+const pagination = {
+    pageSize: 10,
+}
+
+onMounted(() => {
+    init()
 })
+const init = async () => {
+    loading.value = true
+    await getTabData()
+    loading.value = false
+}
+const getTabData = async () => {
+    const { columns } = await dictionaryAll({ keyWord: keyWord.value })
+    tableData.value = columns
+    tabData.value = columns.map((e) => ({
+        label: e.dictionaryName,
+        value: e.id,
+    }))
+}
+const modelRef = ref()
+const handle = (type, data) => {
+    modelRef.value.model.visible = true
+    modelRef.value.model.title = type == TYPE.ADD ? "新增字典" : "编辑字典"
+    modelRef.value.model.tabData = tabData.value
+    modelRef.value.model.methods =
+        type == TYPE.ADD ? createDic : dictionaryFiled
+    if (type == TYPE.EDIT) {
+        modelRef.value.model.form = { ...data, type: TYPE.EDIT }
+    }
+}
 </script>

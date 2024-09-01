@@ -8,11 +8,8 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
+import { USERROLRTYPE } from 'src/enum';
 
-export enum UserRoleEnum {
-  USER = 'ROLE_USER',
-  ADMIN = 'ROLE_ADMIN',
-}
 @Entity('user')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -46,9 +43,9 @@ export class User {
   avatar: string;
 
   @Column('simple-enum', {
-    enum: UserRoleEnum,
+    enum: USERROLRTYPE,
     comment: '角色',
-    default: UserRoleEnum.USER,
+    default: USERROLRTYPE.USER,
   })
   role: string;
 

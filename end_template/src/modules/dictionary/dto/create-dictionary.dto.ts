@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsEnum } from 'class-validator';
-import { ParentType, StatusType } from '../entities/dictionary.entity';
+import { PARENTTYPE, STATUSTYPE } from 'src/enum';
 
 export class CreateDictionaryDto {
   @ApiProperty({ description: '字典值' })
@@ -20,20 +20,17 @@ export class CreateDictionaryDto {
   @ApiProperty({ description: '更新人' })
   updateBy?: string;
 
-  @ApiProperty({ description: '备注' })
-  remark?: string;
-
   @ApiProperty({ description: '状态' })
-  status: StatusType;
+  status: STATUSTYPE;
 
   @ApiProperty({ description: '父级id' })
   parentId: string;
 
   @ApiProperty({
     description: '父类',
-    enum: ParentType,
-    example: ParentType.SON,
+    enum: PARENTTYPE,
+    example: PARENTTYPE.SON,
   })
-  @IsEnum(ParentType, { message: 'parentType 必须是 0 或者 1' })
-  parentType: ParentType;
+  @IsEnum(PARENTTYPE, { message: 'parentType 必须是 0 或者 1' })
+  parentType: PARENTTYPE;
 }

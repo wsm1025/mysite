@@ -1,12 +1,12 @@
 import { PartialType } from '@nestjs/swagger';
 import { CreateDictionaryDto } from './create-dictionary.dto';
-import { ParentType, StatusType } from '../entities/dictionary.entity';
+import { PARENTTYPE, STATUSTYPE } from 'src/enum';
 
 export class UpdateDictionaryDto extends PartialType(CreateDictionaryDto) {
-  status?: StatusType;
+  id: string;
+  status?: STATUSTYPE;
   dictionaryName?: string;
   dictionaryDesc?: string;
   parentId?: string;
-  parentType?: ParentType;
-  remark?: string;
+  parentType?: PARENTTYPE;
 }

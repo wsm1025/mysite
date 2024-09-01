@@ -5,6 +5,7 @@ import envConfig from '../config/env';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { DictionaryModule } from './modules/dictionary/dictionary.module';
+import { MenuModule } from './modules/menu/menu.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { DictionaryModule } from './modules/dictionary/dictionary.module';
     AuthModule,
     UserModule,
     DictionaryModule,
+    MenuModule,
   ],
   controllers: [],
   providers: [],

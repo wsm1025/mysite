@@ -11,8 +11,8 @@ const register = (params) => {
     // @ts-ignore
     return post(resetApiInstanceUrl(apiMap.register), params, { hint: true })
 }
-const menus = () => {
-    return post(resetApiInstanceUrl(apiMap.menus))
+const menus = (userId: string) => {
+    return post(resetApiInstanceUrl(apiMap.menus + `/${userId}`))
 }
 
 const userInfo = () => {

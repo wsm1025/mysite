@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateDictionaryDto } from './dto/create-dictionary.dto';
 import { UpdateDictionaryDto } from './dto/update-dictionary.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +6,7 @@ import { Dictionary } from './entities/dictionary.entity';
 import { Repository } from 'typeorm';
 import { ApiException, ApiErrCode } from '../../core/exceptions/api.exception';
 import { UserInfoDto } from '../user/dto/user-info.dto';
+import { PARENTTYPE, STATUSTYPE } from 'src/enum';
 
 @Injectable()
 export class DictionaryService {
@@ -21,8 +22,8 @@ export class DictionaryService {
     // 使用 OR 条件来查找
     const exist = await this.dictionaryRepository.findOne({
       where: [
-        { dictionaryValue, isDelete: '0' },
-        { dictionaryName, isDelete: '0' },
+        { dictionaryValue, isDelete: STATUSTYPE.ACTIVE },
+        { dictionaryName, isDelete: STATUSTYPE.ACTIVE },
       ],
     });
     if (exist) {
@@ -30,25 +31,22 @@ export class DictionaryService {
     }
     const newDic = await this.dictionaryRepository.create({
       ...createDictionaryDto,
-      createBy: userInfo.userId,
-      updateBy: userInfo.userId,
+      createBy: userInfo.userName,
+      updateBy: userInfo.userName,
     });
-    await this.dictionaryRepository.save(newDic);
+    try {
+      await this.dictionaryRepository.save(newDic);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
     return null;
   }
 
   async findOne(id: string) {
     const column = await this.dictionaryRepository.findOne({
-      where: [{ id, isDelete: '0' }],
+      where: [{ id, isDelete: STATUSTYPE.ACTIVE }],
     });
-    if (!column || column.parentId) {
-      return column ?? null;
-    } else {
-      const children = await this.dictionaryRepository.find({
-        where: [{ parentId: column.id, isDelete: '0' }],
-      });
-      return { parent: column, children };
-    }
+    return column ?? {};
   }
 
   async findAll(parentType = '0,1', keyWord?: string) {
@@ -57,8 +55,17 @@ export class DictionaryService {
     // 初始化查询条件
     const query = this.dictionaryRepository
       .createQueryBuilder('dictionary')
-      .where('dictionary.isDelete = :isDelete', { isDelete: '0' });
+      .where('dictionary.isDelete = :isDelete', {
+        isDelete: STATUSTYPE.ACTIVE,
+      });
 
+    // 处理关键字查询
+    if (keyWord) {
+      query.andWhere(
+        '(dictionary.dictionaryName LIKE :keyWord OR dictionary.dictionaryValue LIKE :keyWord)',
+        { keyWord: `%${keyWord}%` },
+      );
+    }
     // 处理 parentType 查询
     if (splitParentType.length === 1) {
       query.andWhere('dictionary.parentType = :parentType', {
@@ -70,16 +77,7 @@ export class DictionaryService {
       });
     }
 
-    // 处理关键字查询
-    if (keyWord) {
-      query.andWhere(
-        '(dictionary.dictionaryName LIKE :keyWord OR dictionary.dictionaryValue LIKE :keyWord)',
-        { keyWord: `%${keyWord}%` },
-      );
-    }
-
     let columns = await query.getMany();
-
     if (splitParentType?.length === 2) {
       columns
         .filter((item) => item.parentId)
@@ -102,35 +100,46 @@ export class DictionaryService {
     };
   }
 
-  async updateDelete(user, id: string) {
+  async updateDelete(id: string) {
     const column = await this.dictionaryRepository.update(
       { id },
-      { isDelete: '1' },
+      { isDelete: STATUSTYPE.INACTIVE },
     );
     if (column.affected == 0)
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
     return null;
   }
 
-  async updateField(id: string, body: UpdateDictionaryDto) {
-    const {
-      dictionaryName,
-      dictionaryDesc,
-      status,
-      parentId,
-      parentType,
-      remark,
-    } = body;
+  async updateField(body: UpdateDictionaryDto) {
+    const { id, dictionaryName, dictionaryDesc, status, parentId, parentType } =
+      body;
 
-    const updateData: UpdateDictionaryDto = {
+    const updateData: Omit<UpdateDictionaryDto, 'id'> = {
       ...(dictionaryName && { dictionaryName }),
       ...(dictionaryDesc && { dictionaryDesc }),
       ...(status && { status }),
-      ...(parentId && { parentId }),
       ...(parentType && { parentType }),
-      ...(remark && { remark }),
+      parentId,
     };
-    const column = await this.dictionaryRepository.update({ id }, updateData);
+    const record = await this.dictionaryRepository.findOne({
+      where: [{ id, isDelete: STATUSTYPE.ACTIVE }],
+    });
+    let column;
+    try {
+      column = await this.dictionaryRepository.update({ id }, updateData);
+      if (
+        record.parentType == PARENTTYPE.FATHRER &&
+        status == STATUSTYPE.INACTIVE
+      ) {
+        // 更新所有parentId=id的字典
+        await this.dictionaryRepository.update(
+          { parentId: id },
+          { status: STATUSTYPE.INACTIVE },
+        );
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
     if (column.affected === 0)
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
     return null;

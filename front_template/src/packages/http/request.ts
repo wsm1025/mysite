@@ -53,6 +53,10 @@ http.interceptors.response.use(
             ) {
                 window.$message.success(msg)
             }
+            if (code >= 400) {
+                window.$message.error(msg)
+                return Promise.reject(response)
+            }
             return response.data.data
         }
         if (code === 1003) {
@@ -80,5 +84,4 @@ const post = (url: string, params?: any, config?: AxiosRequestConfig) => {
 const get = (url: string, params?: any, config?: AxiosRequestConfig) => {
     return http.get(url, { params, ...config })
 }
-
 export { post, get, http as axios }

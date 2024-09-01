@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiException, ApiErrCode } from '../../core/exceptions/api.exception';
-import { User, UserRoleEnum } from './entities/user.entity';
+import { User } from './entities/user.entity';
+import { USERROLRTYPE } from 'src/enum';
 import { ListUserDto } from './dto/user-info.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -67,7 +68,7 @@ export class UserService {
     if (!user) {
       throw new ApiException(ApiErrCode.USER_NOT_EXIST);
     }
-    if (user.role !== UserRoleEnum.ADMIN) {
+    if (user.role !== USERROLRTYPE.ADMIN) {
       throw new ApiException(ApiErrCode.NO_PERMISSIN);
     }
     await this.userRepository.update({ userId }, { deleteFlag: 1 });

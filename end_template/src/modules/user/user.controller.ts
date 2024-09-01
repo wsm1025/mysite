@@ -12,16 +12,11 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserInfoDto, ListUserDto } from './dto/user-info.dto';
+import { ListUserDto } from './dto/user-info.dto';
 import { AuthGuard } from '@nestjs/passport';
-import {
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/roles/roles.guard';
-import { UserRoleEnum } from './entities/user.entity';
+import { USERROLRTYPE } from 'src/enum';
 import { RoleInterceptor } from 'src/core/interceptor/user.interceptor';
 
 @ApiTags('用户')
@@ -49,7 +44,7 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(ClassSerializerInterceptor) // 不包含密码 @Exclude()的字段
-  @UseInterceptors(new RoleInterceptor(UserRoleEnum.ADMIN))
+  @UseInterceptors(new RoleInterceptor(USERROLRTYPE.ADMIN))
   @Post('delete')
   @UseGuards(RolesGuard)
   delete(@Body('userId') userId) {

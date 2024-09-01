@@ -76,6 +76,7 @@
         "prettier": "^3.3.3",
         "rollup-plugin-visualizer": "^5.9.2",
         "typescript": "^5.0.2",
+        "unocss": "^0.62.3",
         "unplugin-auto-import": "^0.16.6",
         "unplugin-vue-components": "^0.25.1",
         "vfonts": "^0.0.3",

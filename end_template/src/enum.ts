@@ -1,0 +1,13 @@
+enum STATUSTYPE {
+  ACTIVE = '0', // 启用
+  INACTIVE = '1', // 禁用
+}
+enum PARENTTYPE {
+  SON = '0',
+  FATHRER = '1',
+}
+enum USERROLRTYPE {
+  USER = 'ROLE_USER',
+  ADMIN = 'ROLE_ADMIN',
+}
+export { STATUSTYPE, PARENTTYPE, USERROLRTYPE };

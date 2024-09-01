@@ -1,7 +1,11 @@
-import {breakpointsTailwind, useBreakpoints, useEventListener, useThrottleFn} from "@vueuse/core"
-import type {App} from "vue"
+import {
+    breakpointsTailwind,
+    useBreakpoints,
+    useEventListener,
+    useThrottleFn,
+} from "@vueuse/core"
 import appStore from "@/packages/pinia/app.ts"
-import {htmlElementClass} from "@/packages/utils/utils.ts"
+import { htmlElementClass } from "@/packages/utils/utils.ts"
 
 /**
  * 监听窗口
@@ -15,11 +19,10 @@ const throttledFn = useThrottleFn(() => {
     const lg = breakpoints.between("lg", "xl")
     const xl = breakpoints.between("xl", "2xl")
     const xxl = breakpoints["2xl"]
-    app.browser = {xs, sm, md, lg, xl, xxl}
+    app.browser = { xs, sm, md, lg, xl, xxl }
     app.mobile = xs.value
     app.collapsed = sm.value || md.value
 }, 200)
-
 
 /**
  * 更新灰色模式
@@ -40,9 +43,7 @@ const updateHtmlWeak = () => {
 }
 
 const setupGlobal = () => {
-    throttledFn().then(() => (
-        useEventListener(window, "resize", throttledFn)
-    ))
+    throttledFn().then(() => useEventListener(window, "resize", throttledFn))
 }
 
 const resetApiInstanceUrl = (key) => {
@@ -52,8 +53,4 @@ const resetApiInstanceUrl = (key) => {
 }
 
 export default setupGlobal
-export {
-    updateHtmlGray,
-    updateHtmlWeak,
-    resetApiInstanceUrl
-}
+export { updateHtmlGray, updateHtmlWeak, resetApiInstanceUrl }

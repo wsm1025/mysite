@@ -387,7 +387,7 @@ export default defineComponent({
                                 } else {
                                     locaStore.set("access_token", result.data)
                                 }
-                                router.push("/home")
+                                router.replace("/home")
                             }
                         })
                     }

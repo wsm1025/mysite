@@ -6,14 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-export enum ParentType {
-  SON = 0,
-  FATHRER = 1,
-}
-export enum StatusType {
-  activate = 0, // 启用
-  disable = 1, // 禁用
-}
+import { PARENTTYPE, STATUSTYPE } from 'src/enum';
 @Entity('dictionary')
 export class Dictionary {
   @PrimaryGeneratedColumn('uuid')
@@ -21,12 +14,12 @@ export class Dictionary {
 
   @Column({
     name: 'dictionary_value',
-    length: 10,
+    length: 20,
     comment: '字典值',
   })
   dictionaryValue: string;
 
-  @Column({ name: 'dictionary_name', comment: '字典名称' })
+  @Column({ name: 'dictionary_name', comment: '字典名称', length: 10 })
   dictionaryName: string;
 
   @Column({
@@ -66,33 +59,24 @@ export class Dictionary {
   })
   updateBy?: string;
 
-  @Column({
-    name: 'remark',
-    type: 'varchar',
-    length: 50,
-    comment: '备注',
-    nullable: true,
-  })
-  remark?: string;
-
   @Exclude()
   @Column({ name: 'is_delete', comment: '删除标志', default: '0' })
-  isDelete: string;
+  isDelete: STATUSTYPE;
 
   @Column({
     name: 'status',
-    comment: '状态 0:禁用 1:启用',
-    default: StatusType.activate,
+    comment: '状态  0:启用 1:禁用',
+    default: STATUSTYPE.ACTIVE,
   })
-  status: StatusType;
+  status: STATUSTYPE;
 
-  @Column({ name: 'parent_id' })
-  parentId: string;
+  @Column({ name: 'parent_id', nullable: true })
+  parentId?: string;
 
   @Column({
     name: 'parent_type',
     comment: '0:子类 1:父类',
-    default: ParentType.SON,
+    default: PARENTTYPE.SON,
   })
-  parentType: ParentType;
+  parentType: PARENTTYPE;
 }

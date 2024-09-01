@@ -27,15 +27,13 @@ export default ({ mode }: { mode: any }) => {
             Components({
                 resolvers: [NaiveUiResolver()],
             }),
-            // viteMockServe({
-            //     mockPath: "./mock",
-            // }),
             ...plugins,
         ],
         publicDir: "public",
         resolve: {
             alias: {
                 "@": path.resolve(__dirname, "src"),
+                "@api": path.resolve(__dirname, "src/app/admin/api"),
                 __ROOT__: path.resolve(__dirname, ""),
             },
             extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"], // 自动匹配文件后缀名
