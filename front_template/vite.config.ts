@@ -34,6 +34,10 @@ export default ({ mode }: { mode: any }) => {
             alias: {
                 "@": path.resolve(__dirname, "src"),
                 "@api": path.resolve(__dirname, "src/app/admin/api"),
+                "@components": path.resolve(
+                    __dirname,
+                    "src/app/admin/components"
+                ),
                 __ROOT__: path.resolve(__dirname, ""),
             },
             extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"], // 自动匹配文件后缀名

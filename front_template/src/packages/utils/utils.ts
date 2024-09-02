@@ -6,7 +6,19 @@ import cloneDeep from "lodash/cloneDeep.js"
  * @param keyField
  * @param childField
  */
-const toTree = ({arr = [], keyField = "id", children = "children", pid = "pid",callback=()=>{}}:{arr:Array<any>;keyField?:string;children?:string;pid?:string;callback?:(item) => void}) => {
+const toTree = ({
+    arr = [],
+    keyField = "id",
+    children = "children",
+    pid = "pid",
+    callback = () => {},
+}: {
+    arr: Array<any>
+    keyField?: string
+    children?: string
+    pid?: string
+    callback?: (item) => void
+}) => {
     const data = cloneDeep(arr)
     const map: any = {}
     data.forEach(function (item: any) {
@@ -16,7 +28,7 @@ const toTree = ({arr = [], keyField = "id", children = "children", pid = "pid",c
     data.forEach(function (item: any) {
         const parent = map[item[pid]]
         if (parent) {
-            (parent[children] || (parent[children] = [])).push(item)
+            ;(parent[children] || (parent[children] = [])).push(item)
         } else {
             new_data.push(item)
         }
@@ -30,7 +42,7 @@ const toTree = ({arr = [], keyField = "id", children = "children", pid = "pid",c
  * @param arr
  * @param id
  */
-const getObjectPath = ({arr = <any>[], id = ""}) => {
+const getObjectPath = ({ arr = <any>[], id = "" }) => {
     const data = cloneDeep(arr)
     for (const i in arr) {
         // eslint-disable-next-line no-prototype-builtins
@@ -39,7 +51,7 @@ const getObjectPath = ({arr = <any>[], id = ""}) => {
                 return [data[i]]
             }
             if (data[i].children) {
-                const node: any = getObjectPath({arr: data[i].children, id})
+                const node: any = getObjectPath({ arr: data[i].children, id })
                 if (node !== undefined) {
                     return node.concat(data[i])
                 }
@@ -48,8 +60,11 @@ const getObjectPath = ({arr = <any>[], id = ""}) => {
     }
 }
 
-
-function htmlElementClass(state: boolean, clsName: string, target?: HTMLElement) {
+function htmlElementClass(
+    state: boolean,
+    clsName: string,
+    target?: HTMLElement
+) {
     const targetEl = target || document.body
     if (state) {
         targetEl.classList.add(clsName)
@@ -58,15 +73,20 @@ function htmlElementClass(state: boolean, clsName: string, target?: HTMLElement)
     }
 }
 
-
 /**
  * 复制
  * @param text
  */
 const clipboardCopy = (text: string) => {
-    if (navigator.clipboard) { // 如果浏览器兼容该 API
+    if (navigator.clipboard) {
+        // 如果浏览器兼容该 API
         return navigator.clipboard.writeText(text).catch(function (err) {
-            throw (err !== undefined ? err : new DOMException("The request is not allowed", "NotAllowedError"))
+            throw err !== undefined
+                ? err
+                : new DOMException(
+                      "The request is not allowed",
+                      "NotAllowedError"
+                  )
         })
     }
 
@@ -103,28 +123,33 @@ const clipboardCopy = (text: string) => {
 
     return success
         ? Promise.resolve()
-        : Promise.reject(new DOMException("The request is not allowed", "NotAllowedError"))
+        : Promise.reject(
+              new DOMException("The request is not allowed", "NotAllowedError")
+          )
 }
 
-
-const rdmRgbColor = () =>{
-    const arr:any = []
+const rdmRgbColor = () => {
+    const arr: any = []
     for (let i = 0; i < 3; i++) {
         arr.push(Math.floor(Math.random() * 128 + 64))
         arr.push(Math.floor(Math.random() * 128 + 128))
     }
     const [r, g, b] = arr
     return `#${r.toString().length > 1 ? r.toString() : "0" + r.toString()}${g.toString().length > 1 ? g.toString() : "0" + g.toString()}${
-        b.toString().length > 1 ? b.toString() : "0" + b.toString()}`
+        b.toString().length > 1 ? b.toString() : "0" + b.toString()
+    }`
 }
-
-
-
+const validateUrl = (url: string) => {
+    return /^(((ht|f)tps?):\/\/)?([^!@#$%^&*?.\s-]([^!@#$%^&*?.\s]{0,63}[^!@#$%^&*?.\s])?\.)+[a-z]{2,6}\/?/.test(
+        url
+    )
+}
 
 export {
     toTree,
     getObjectPath,
     htmlElementClass,
     clipboardCopy,
-    rdmRgbColor
+    rdmRgbColor,
+    validateUrl,
 }

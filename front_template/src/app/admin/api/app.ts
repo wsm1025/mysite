@@ -12,8 +12,8 @@ const branch = () => {
     return post(apiMap.branch)
 }
 
-const menus = (userId: string) => {
-    return post(apiMap.menus + `/${userId}`)
+const menus = () => {
+    return post(apiMap.menus)
 }
 // 获取全部数据
 const dictionaryAll = (params = {}) => {
@@ -33,6 +33,9 @@ const findDicById = (id) => {
 const deleteDicById = (params) => {
     return post(apiMap.deleteDicById, params)
 }
+const craeteMenu = (params) => {
+    return post(apiMap.craeteMenu, params)
+}
 
 export {
     member,
@@ -44,4 +47,5 @@ export {
     createDic,
     findDicById,
     deleteDicById,
+    craeteMenu,
 }

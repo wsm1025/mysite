@@ -8,6 +8,7 @@ export default {
     createDic: "/dictionary/createDic",
     findDicById: "/dictionary/find",
     deleteDicById: "/dictionary/delete",
+    craeteMenu: "/menu/craeteMenu",
     gsc: {
         token: "/gsc/token",
         sentence: "/gsc/sentence",
