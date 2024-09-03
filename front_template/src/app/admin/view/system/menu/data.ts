@@ -1,11 +1,9 @@
 import { DataTableColumns, NButton, NPopconfirm, NSwitch } from "naive-ui"
 import { h } from "vue"
+import { TYPE } from "../enum"
 
 const createColumns = ({ compHandle }): DataTableColumns => {
     return [
-        {
-            type: "selection",
-        },
         {
             title: "菜单名称",
             key: "title",
@@ -81,7 +79,7 @@ const createColumns = ({ compHandle }): DataTableColumns => {
                             type: "success",
                             size: "small",
                             ghost: true,
-                            onClick: () => compHandle.edit(row),
+                            onClick: () => compHandle.action(TYPE.EDIT, row),
                             style: { marginRight: "5px" },
                         },
                         { default: () => "编辑" }
@@ -90,9 +88,7 @@ const createColumns = ({ compHandle }): DataTableColumns => {
                     h(
                         NPopconfirm,
                         {
-                            onPositiveClick: () => {
-                                compHandle.del(row)
-                            },
+                            onPositiveClick: () => {},
                             negativeText: "取消",
                             positiveText: "确定",
                         },

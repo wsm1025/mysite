@@ -1,6 +1,10 @@
 import { get, post } from "@/packages/http/request.ts"
 import apiMap from "@/app/admin/api/apiMap.ts"
 
+const findDicByParentName = (name, params = {}) => {
+    return get(apiMap.findDicByParentName + name, params)
+}
+
 const member = () => {
     return post(apiMap.member)
 }
@@ -19,7 +23,7 @@ const menus = () => {
 const dictionaryAll = (params = {}) => {
     return get(apiMap.dictionaryAll, params)
 }
-// 获取全部数据
+
 const dictionaryFiled = (params) => {
     return post(apiMap.dictionaryFiled, params)
 }
@@ -33,11 +37,15 @@ const findDicById = (id) => {
 const deleteDicById = (params) => {
     return post(apiMap.deleteDicById, params)
 }
-const craeteMenu = (params) => {
+const createMenu = (params) => {
     return post(apiMap.craeteMenu, params)
+}
+const menuFiled = (params) => {
+    return post(apiMap.menuFiled, params)
 }
 
 export {
+    findDicByParentName,
     member,
     role,
     branch,
@@ -47,5 +55,6 @@ export {
     createDic,
     findDicById,
     deleteDicById,
-    craeteMenu,
+    createMenu,
+    menuFiled,
 }

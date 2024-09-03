@@ -51,7 +51,8 @@ import {
 } from "@api/app"
 import dayjs from "dayjs"
 import Modal from "./components/modal.vue"
-import { TYPE } from "./components/enum.ts"
+import { TYPE } from "../enum.ts"
+
 const tabData: Ref<Array<{ name: string; value: string }>> = ref([])
 const tableData = ref([])
 
@@ -202,3 +203,4 @@ const handle = (type, data) => {
     }
 }
 </script>
+../enum.ts

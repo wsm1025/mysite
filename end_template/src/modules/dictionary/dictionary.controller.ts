@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Param,
-  Delete,
   UseGuards,
   ClassSerializerInterceptor,
   UseInterceptors,
@@ -32,13 +31,13 @@ export class DictionaryController {
     return this.dictionaryService.create(createDictionaryDto, req.user);
   }
 
-  @ApiOperation({ summary: '查找单个字典' })
+  @ApiOperation({ summary: '传入父级别id 查询子级字典' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get('/find/:id')
-  findOne(@Param('id') id: string) {
-    return this.dictionaryService.findOne(id);
+  @Get('/findDicByParentName/:name')
+  findDicByParentName(@Param('name') name: string) {
+    return this.dictionaryService.findDicByParentName(name);
   }
 
   @ApiOperation({ summary: '查找所有字典' })

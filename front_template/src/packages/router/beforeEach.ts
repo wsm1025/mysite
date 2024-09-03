@@ -119,10 +119,10 @@ function updateRouterAll(
     if (appStore.hasRoles) {
         next()
     } else {
-        getMenus(appStore.userInfo?.userId)
+        getMenus()
             .then((res) => {
                 const { menus } = appStore.configOptions
-                const allMenus = unionWith(res.data, menus)
+                const allMenus = unionWith(res, menus)
                 appStore.allMenus = allMenus.map((item) => {
                     if (item.icon) {
                         item.iconName = item.icon

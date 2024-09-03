@@ -43,10 +43,10 @@
                     placeholder="请输入菜单名称"
                 />
             </n-form-item>
-            <n-form-item label="路径" path="path">
+            <n-form-item label="路由" path="path">
                 <n-input
                     v-model:value="model.form.path"
-                    placeholder="请输入hash路径"
+                    placeholder="请输入路由"
                 />
             </n-form-item>
             <n-form-item label="文件地址" path="file">
@@ -56,7 +56,10 @@
                 />
             </n-form-item>
             <n-form-item label="图标" path="icon">
-                <n-button :circle="model.form.icon?.length" @click="selectIcon">
+                <n-button
+                    :circle="Boolean(model.form.icon?.length)"
+                    @click="selectIcon"
+                >
                     <template #icon v-if="model.form.icon">
                         <n-icon>
                             <component :is="model.form.icon" />
@@ -87,21 +90,12 @@
             <n-form-item label="是否显示tab" path="tabHidden">
                 <n-switch v-model:value="model.form.tabHidden" />
             </n-form-item>
-            <n-form-item label="权限" path="premission">
+            <n-form-item label="权限" path="permission">
                 <n-select
                     multiple
-                    v-model:value="model.form.premission"
+                    v-model:value="model.form.permission"
                     placeholder="请选择权限"
-                    :options="[
-                        {
-                            label: '管理员',
-                            value: 'ROLE_ADMIN',
-                        },
-                        {
-                            label: '用户',
-                            value: 'ROLE_USER',
-                        },
-                    ]"
+                    :options="premissionList"
                 /> </n-form-item
             ><n-form-item label="排序" path="order" required>
                 <n-input-number
@@ -118,10 +112,20 @@ import { ref, defineExpose, computed } from "vue"
 import ChooseIcon from "@components/chooseIcon.vue"
 import appPinia from "@/packages/pinia/app.ts"
 import { validateUrl } from "@/packages/utils/utils.ts"
+import { findDicByParentName } from "@api/app.ts"
+import { useMessage } from "naive-ui"
 
+const message = useMessage()
 const appStore = appPinia()
 const emit = defineEmits(["success"])
 const formRef = ref()
+const premissionList = ref([])
+findDicByParentName("ROLE").then((res) => {
+    premissionList.value = res.map((e) => ({
+        label: e.dictionaryName,
+        value: e.dictionaryValue,
+    }))
+})
 const model = ref({
     form: {
         parentType: "1",
@@ -137,7 +141,7 @@ const model = ref({
         tabFix: false,
         tabHidden: true,
         order: 0,
-        premission: [],
+        permission: [],
     },
     visible: false,
     title: "",
@@ -157,20 +161,6 @@ const rules = computed(() => {
             {
                 required: true,
                 message: "请输入标题",
-                trigger: "blur",
-            },
-        ],
-        path: [
-            {
-                required: true,
-                message: "请输入hash路径",
-                trigger: "blur",
-            },
-        ],
-        file: [
-            {
-                required: true,
-                message: "请输入文件路径",
                 trigger: "blur",
             },
         ],
@@ -205,10 +195,12 @@ const submit = async () => {
     model.value
         .methods({
             ...model.value.form,
+            permission: model.value.form.permission.join(","),
         })
         .then(() => {
             cancel()
             emit("success")
+            message.success("操作成功")
         })
         .finally(() => {
             loading.value = false
@@ -216,7 +208,22 @@ const submit = async () => {
 }
 const cancel = () => {
     model.value = {
-        form: {},
+        form: {
+            parentType: "1",
+            pid: undefined,
+            title: "",
+            path: "",
+            file: "",
+            icon: "",
+            isIframe: false,
+            url: "",
+            shows: true,
+            keepAlive: false,
+            tabFix: false,
+            tabHidden: true,
+            order: 0,
+            premission: [],
+        },
         visible: false,
         title: "",
         methods: () => {},

@@ -42,11 +42,21 @@ export class DictionaryService {
     return null;
   }
 
-  async findOne(id: string) {
-    const column = await this.dictionaryRepository.findOne({
-      where: [{ id, isDelete: STATUSTYPE.ACTIVE }],
+  async findDicByParentName(name: string) {
+    const list = await this.dictionaryRepository.find({
+      where: [
+        { dictionaryValue: name, isDelete: STATUSTYPE.ACTIVE },
+        {
+          parentId: (
+            await this.dictionaryRepository.findOne({
+              where: { dictionaryValue: name, isDelete: STATUSTYPE.ACTIVE },
+            })
+          )?.id,
+          isDelete: STATUSTYPE.ACTIVE,
+        },
+      ],
     });
-    return column ?? {};
+    return list.filter((e) => Boolean(e.parentId));
   }
 
   async findAll(parentType = '0,1', keyWord?: string) {

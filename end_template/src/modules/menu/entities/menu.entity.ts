@@ -16,22 +16,25 @@ export class Menu {
   @Column({ type: 'varchar', length: 20 })
   title: string;
 
-  @Column({ type: 'varchar', length: 40, nullable: true })
+  @Column({ type: 'varchar', length: 60, nullable: true })
   path?: string;
 
-  @Column({ type: 'varchar', length: 40, nullable: true })
+  @Column({ type: 'varchar', length: 60, nullable: true })
   file?: string;
 
-  @Column({ type: 'varchar', length: 20, nullable: true })
+  @Column({ type: 'varchar', length: 60, nullable: true })
   icon?: string;
 
-  @Column({ type: 'boolean', default: false, nullable: true })
+  @Column({ type: 'boolean', nullable: true, default: false })
   isIframe?: boolean;
 
   @Column({ type: 'varchar', nullable: true, default: '' })
   url?: string;
 
-  @Column({ type: 'boolean', default: false, nullable: true })
+  @Column({ type: 'varchar', nullable: true, default: '' })
+  pid?: any;
+
+  @Column({ type: 'boolean', default: true, nullable: true })
   shows?: boolean;
 
   @Column({ type: 'boolean', default: false })
@@ -46,10 +49,10 @@ export class Menu {
   @Column({ type: 'int', default: 0 })
   order: number;
 
-  // 需要的权限 permission []
+  // 需要的权限
   @Exclude()
-  @Column({ type: 'varchar', nullable: true, default: [] })
-  permission?: USERROLRTYPE[];
+  @Column({ type: 'varchar', length: 50, nullable: true, default: null })
+  permission?: string | null;
 
   @CreateDateColumn({
     name: 'create_time',
