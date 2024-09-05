@@ -41,6 +41,12 @@ export class DictionaryService {
     }
     return null;
   }
+  async findOne(id: string) {
+    const column = await this.dictionaryRepository.findOne({
+      where: [{ id, isDelete: STATUSTYPE.ACTIVE }],
+    });
+    return column ?? {};
+  }
 
   async findDicByParentName(name: string) {
     const list = await this.dictionaryRepository.find({
@@ -120,10 +126,12 @@ export class DictionaryService {
     return null;
   }
 
-  async updateField(body: UpdateDictionaryDto) {
-    const { id, dictionaryName, dictionaryDesc, status, parentId, parentType } =
+  async updateField(id: string, body: UpdateDictionaryDto) {
+    const { status, dictionaryName, dictionaryDesc, parentType, parentId } =
       body;
-
+    const record = await this.dictionaryRepository.findOne({
+      where: [{ id, isDelete: STATUSTYPE.ACTIVE }],
+    });
     const updateData: Omit<UpdateDictionaryDto, 'id'> = {
       ...(dictionaryName && { dictionaryName }),
       ...(dictionaryDesc && { dictionaryDesc }),
@@ -131,9 +139,6 @@ export class DictionaryService {
       ...(parentType && { parentType }),
       parentId,
     };
-    const record = await this.dictionaryRepository.findOne({
-      where: [{ id, isDelete: STATUSTYPE.ACTIVE }],
-    });
     let column;
     try {
       column = await this.dictionaryRepository.update({ id }, updateData);

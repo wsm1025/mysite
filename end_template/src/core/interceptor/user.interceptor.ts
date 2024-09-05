@@ -2,10 +2,8 @@ import { NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { USERROLRTYPE } from 'src/enum';
 import { ApiErrCode, ApiException } from '../exceptions/api.exception';
-
 export class RoleInterceptor implements NestInterceptor {
   constructor(private readonly requiredRole: USERROLRTYPE) {}
-
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,

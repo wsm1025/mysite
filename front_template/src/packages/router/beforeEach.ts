@@ -27,7 +27,7 @@ function findComponent(filePath: string) {
 
 function addRouter(item) {
     let component = null
-    if (item.isIframe === true && item.file === "") {
+    if (item.isIframe === true) {
         component = globalViewIframe
     } else {
         if (item.file) {

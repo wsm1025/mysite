@@ -114,6 +114,7 @@ import appPinia from "@/packages/pinia/app.ts"
 import { validateUrl } from "@/packages/utils/utils.ts"
 import { findDicByParentName } from "@api/app.ts"
 import { useMessage } from "naive-ui"
+import { TYPE } from "../../enum"
 
 const message = useMessage()
 const appStore = appPinia()
@@ -150,11 +151,13 @@ const model = ref({
 const menuList = ref(
     appStore.treeMenus
         .filter((e) => e.path !== "/home")
+        .filter((e) => e.path == model.value.form.path)
         .map((e) => ({
             label: e.title,
             value: e.id,
         }))
 )
+
 const rules = computed(() => {
     return {
         title: [
@@ -190,12 +193,12 @@ const rules = computed(() => {
 })
 const loading = ref(false)
 const submit = async () => {
-    loading.value = true
     await formRef.value.validate()
+    loading.value = true
     model.value
         .methods({
             ...model.value.form,
-            permission: model.value.form.permission.join(","),
+            permission: model.value.form.permission?.join(","),
         })
         .then(() => {
             cancel()
@@ -222,7 +225,7 @@ const cancel = () => {
             tabFix: false,
             tabHidden: true,
             order: 0,
-            premission: [],
+            permission: [],
         },
         visible: false,
         title: "",
@@ -237,7 +240,20 @@ const chooseEmit = (item) => {
     model.value.form.icon = item.name
     formRef.value.validate("icon")
 }
+const init = (type, data, method) => {
+    model.value.visible = true
+    model.value.title = type == TYPE.ADD ? "新增菜单" : "编辑菜单"
+    model.value.methods = method
+    if (type == TYPE.EDIT) {
+        model.value.form = {
+            ...data,
+            pid: data.pid || undefined,
+            permission: (data.permission || "").split(",").filter(Boolean),
+            parentType: !data.pid ? "1" : "0",
+        }
+    }
+}
 defineExpose({
-    model,
+    init,
 })
 </script>

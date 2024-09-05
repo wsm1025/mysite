@@ -26,8 +26,8 @@ export class MenuController {
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(new RoleInterceptor(USERROLRTYPE.ADMIN))
   @Post('craeteMenu')
-  create(@Body() createMenuDto: CreateMenuDto) {
-    return this.menuService.create(createMenuDto);
+  create(@Body() createMenuDto: CreateMenuDto, @Req() req) {
+    return this.menuService.create(createMenuDto, req.user);
   }
 
   @ApiOperation({ summary: '获取列表' })

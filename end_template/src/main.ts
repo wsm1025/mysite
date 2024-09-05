@@ -32,7 +32,7 @@ async function bootstrap() {
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
-  }); // 允许跨域
+  });
   await app.listen(POST, () => {
     Logger.log(`服务已经启动,接口请访问:http://localhost:${POST}/${PREFIX}`);
   });

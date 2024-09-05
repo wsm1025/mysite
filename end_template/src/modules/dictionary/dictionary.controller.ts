@@ -16,6 +16,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleInterceptor } from 'src/core/interceptor/user.interceptor';
 import { USERROLRTYPE } from 'src/enum';
+import { Roles } from 'src/auth/roles/roles.decorator';
 
 @ApiTags('字典值')
 @Controller('dictionary')
@@ -40,6 +41,15 @@ export class DictionaryController {
     return this.dictionaryService.findDicByParentName(name);
   }
 
+  @ApiOperation({ summary: '查找单个字典' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/find/:id')
+  findOne(@Param('id') id: string) {
+    return this.dictionaryService.findOne(id);
+  }
+
   @ApiOperation({ summary: '查找所有字典' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
@@ -52,8 +62,9 @@ export class DictionaryController {
   @ApiOperation({ summary: '删除字典' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(new RoleInterceptor(USERROLRTYPE.ADMIN))
+  // @UseInterceptors(new RoleInterceptor(USERROLRTYPE.ADMIN))
   @Post('/delete')
+  @Roles([USERROLRTYPE.USER])
   updateDelete(@Body('id') id: string) {
     return this.dictionaryService.updateDelete(id);
   }
@@ -62,7 +73,7 @@ export class DictionaryController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post('/field')
-  updateField(@Body() body) {
-    return this.dictionaryService.updateField(body);
+  updateField(@Body('id') id, @Body() body) {
+    return this.dictionaryService.updateField(id, body);
   }
 }

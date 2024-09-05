@@ -37,13 +37,19 @@ export class MenuService {
     private menuRepository: Repository<Menu>,
   ) {}
 
-  async create(createMenuDto: CreateMenuDto) {
+  async create(createMenuDto: CreateMenuDto, userInfo: UserInfoDto) {
+    const newMenu = await this.menuRepository.create({
+      ...createMenuDto,
+      createBy: userInfo.userName,
+      updateBy: userInfo.userName,
+    });
     let column;
     try {
-      column = await this.menuRepository.save(createMenuDto);
+      column = await this.menuRepository.save(newMenu);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+    console.log(column);
     if (column.affected === 0)
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
     return null;
@@ -98,7 +104,6 @@ export class MenuService {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
-    console.log(column);
     if (column.affected === 0)
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
     return null;

@@ -102,17 +102,8 @@ const compHandle = reactive({
             })
     },
     action(type, data = {}) {
-        modelRef.value.model.visible = true
-        modelRef.value.model.title = type == TYPE.ADD ? "新增菜单" : "编辑菜单"
-        modelRef.value.model.methods =
-            type === type.ADD ? createMenu : menuFiled
-        if (type == TYPE.EDIT) {
-            modelRef.value.model.form = {
-                ...data,
-                permission: (data.permission || "").split(",").filter(Boolean),
-                parentType: !data.pid ? "1" : "0",
-            }
-        }
+        const method = TYPE.ADD ? createMenu : menuFiled
+        modelRef.value.init(type, data, method)
     },
     handleColumnsOptions(value: (string | number)[]) {
         compData.columns = compData.sourceColumns.filter(
