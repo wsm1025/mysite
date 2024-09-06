@@ -74,7 +74,7 @@ import { reactive, ref } from "vue"
 import { menus } from "@/app/admin/api/app.ts"
 import { toTree } from "@/packages/utils/utils.ts"
 import Modal from "./components/modal.vue"
-import { createMenu, menuFiled } from "@api/app.ts"
+import { createMenu, menuFiled, menuDelete } from "@api/app.ts"
 import { createColumns } from "./data"
 import { TYPE } from "../enum"
 
@@ -102,7 +102,7 @@ const compHandle = reactive({
             })
     },
     action(type, data = {}) {
-        const method = TYPE.ADD ? createMenu : menuFiled
+        const method = type === TYPE.ADD ? createMenu : menuFiled
         modelRef.value.init(type, data, method)
     },
     handleColumnsOptions(value: (string | number)[]) {
@@ -110,6 +110,8 @@ const compHandle = reactive({
             (item) => value.indexOf(item.key) !== -1
         )
     },
+    menuDelete,
+    menuFiled,
 })
 compData.sourceColumns = createColumns({ compHandle })
 compData.columns = compData.sourceColumns

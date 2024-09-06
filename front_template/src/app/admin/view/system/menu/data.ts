@@ -1,6 +1,16 @@
-import { DataTableColumns, NButton, NPopconfirm, NSwitch } from "naive-ui"
+import {
+    DataTableColumns,
+    NButton,
+    NIcon,
+    NPopconfirm,
+    NSwitch,
+    useMessage,
+} from "naive-ui"
 import { h } from "vue"
 import { TYPE } from "../enum"
+import { icons } from "@/packages/config/icon.ts"
+import { menuFiled } from "@/app/admin/api/app"
+const message = useMessage()
 
 const createColumns = ({ compHandle }): DataTableColumns => {
     return [
@@ -18,17 +28,20 @@ const createColumns = ({ compHandle }): DataTableColumns => {
             width: 160,
         },
         {
-            title: "路径",
-            key: "file",
-            align: "center",
-            ellipsis: true,
-            width: 160,
-        },
-        {
             title: "图标",
             key: "icon",
             align: "center",
-            ellipsis: true,
+            width: 70,
+            render(row: any) {
+                return h(NIcon, null, {
+                    default: () =>
+                        h(icons[row.icon], {
+                            style: {
+                                fontSize: "20px",
+                            },
+                        }),
+                })
+            },
         },
         {
             title: "是否显示",
@@ -38,7 +51,8 @@ const createColumns = ({ compHandle }): DataTableColumns => {
             width: 100,
             render(row: any) {
                 return h(NSwitch, {
-                    defaultValue: row.shows,
+                    value: row.shows,
+                    disabled: true,
                 })
             },
         },
@@ -50,8 +64,38 @@ const createColumns = ({ compHandle }): DataTableColumns => {
             width: 100,
             render(row: any) {
                 return h(NSwitch, {
-                    defaultValue: row.keepAlive,
+                    value: row.keepAlive,
+                    onUpdateValue: async (value) => {
+                        await menuFiled({
+                            keepAlive: value,
+                            id: row.id,
+                        })
+                        compHandle.getTableData()
+                    },
                 })
+            },
+        },
+        {
+            title: "是否外链",
+            key: "isIframe",
+            align: "center",
+            ellipsis: true,
+            width: 100,
+            render(row: any) {
+                return h(NSwitch, {
+                    value: row.isIframe,
+                    disabled: true,
+                })
+            },
+        },
+        {
+            title: "外链地址",
+            key: "url",
+            align: "center",
+            ellipsis: true,
+            width: 100,
+            render(row: any) {
+                return h("span", {}, row.url || "/")
             },
         },
         {
@@ -62,7 +106,33 @@ const createColumns = ({ compHandle }): DataTableColumns => {
             width: 100,
             render(row: any) {
                 return h(NSwitch, {
-                    defaultValue: row.tabFix,
+                    value: row.tabFix,
+                    onUpdateValue: async (value) => {
+                        await menuFiled({
+                            tabFix: value,
+                            id: row.id,
+                        })
+                        compHandle.getTableData()
+                    },
+                })
+            },
+        },
+        {
+            title: "显示tab",
+            key: "tabHidden",
+            align: "center",
+            ellipsis: true,
+            width: 100,
+            render(row: any) {
+                return h(NSwitch, {
+                    value: row.tabHidden,
+                    onUpdateValue: async (value) => {
+                        await menuFiled({
+                            tabHidden: value,
+                            id: row.id,
+                        })
+                        compHandle.getTableData()
+                    },
                 })
             },
         },
@@ -88,7 +158,14 @@ const createColumns = ({ compHandle }): DataTableColumns => {
                     h(
                         NPopconfirm,
                         {
-                            onPositiveClick: () => {},
+                            onPositiveClick: async () => {
+                                await compHandle.menuDelete({
+                                    id: row.id,
+                                    isDelete: "1",
+                                })
+                                message.success("操作成功")
+                                compHandle.getTableData()
+                            },
                             negativeText: "取消",
                             positiveText: "确定",
                         },

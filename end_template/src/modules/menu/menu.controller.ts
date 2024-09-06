@@ -17,6 +17,7 @@ import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleInterceptor } from 'src/core/interceptor/user.interceptor';
 import { USERROLRTYPE } from 'src/enum';
+import { DeleteMenuDto } from './dto/delete-menu.dto';
 
 @Controller('menu')
 export class MenuController {
@@ -37,12 +38,21 @@ export class MenuController {
     return this.menuService.getList();
   }
 
-  @ApiOperation({ summary: '更新字典某些值' })
+  @ApiOperation({ summary: '更新菜单某些值' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(new RoleInterceptor(USERROLRTYPE.ADMIN))
   @Post('/field')
-  updateField(@Body() body, @Req() req) {
+  updateField(@Body() body: UpdateMenuDto, @Req() req) {
     return this.menuService.updateField(body, req.user);
+  }
+
+  @ApiOperation({ summary: '删除菜单' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(new RoleInterceptor(USERROLRTYPE.ADMIN))
+  @Post('/delete')
+  updateDelete(@Body() DeleteMenuDto: DeleteMenuDto) {
+    return this.menuService.updateDelete(DeleteMenuDto);
   }
 }

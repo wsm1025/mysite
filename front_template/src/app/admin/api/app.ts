@@ -43,6 +43,9 @@ const createMenu = (params) => {
 const menuFiled = (params) => {
     return post(apiMap.menuFiled, params)
 }
+const menuDelete = (params) => {
+    return post(apiMap.menuDelete, params)
+}
 
 export {
     findDicByParentName,
@@ -57,4 +60,5 @@ export {
     deleteDicById,
     createMenu,
     menuFiled,
+    menuDelete,
 }

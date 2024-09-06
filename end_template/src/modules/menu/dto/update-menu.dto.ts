@@ -1,18 +1,61 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateMenuDto } from './create-menu.dto';
+import {
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsNumber,
+  IsNotEmpty,
+} from 'class-validator';
 
-export class UpdateMenuDto extends PartialType(CreateMenuDto) {
+export class UpdateMenuDto {
+  @IsString()
+  @IsNotEmpty()
   id: string;
-  title: string;
+
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @IsOptional()
+  @IsString()
   path?: string;
+
+  @IsOptional()
+  @IsString()
   file?: string;
+
+  @IsOptional()
+  @IsString()
   icon?: string;
+
+  @IsOptional()
+  @IsBoolean()
   isIframe?: boolean;
+
+  @IsOptional()
+  @IsString()
   url?: string;
+
+  @IsOptional()
+  @IsBoolean()
   shows?: boolean;
-  keepAlive: boolean;
-  tabFix: boolean;
-  tabHidden: boolean;
-  order: number;
+
+  @IsOptional()
+  @IsBoolean()
+  keepAlive?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  tabFix?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  tabHidden?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  order?: number;
+
+  @IsOptional()
+  @IsString()
   permission?: string;
 }

@@ -13,7 +13,12 @@ async function bootstrap() {
   app.setGlobalPrefix('api'); // 设置全局路由前缀
   app.useGlobalFilters(new HttpExceptionFilter()); // 全局注册过滤器
   app.useGlobalInterceptors(new TransformInterceptor()); //全局注册拦截器
-  app.useGlobalPipes(new ValidationPipe()); // 全局注册验证管道
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  ); // 全局注册验证管道
   // 设置静态资源 express
   app.useStaticAssets('public', {
     prefix: '/static', // 一定不可以省略 '/'

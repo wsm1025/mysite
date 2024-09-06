@@ -1,15 +1,10 @@
-import { USERROLRTYPE } from 'src/enum';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  UpdateDateColumn,
-  CreateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { CommonEntity } from 'src/modules/common.entity';
+import { STATUSTYPE } from 'src/enum';
 
 @Entity('menu')
-export class Menu {
+export class Menu extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -51,34 +46,10 @@ export class Menu {
 
   // 需要的权限
   @Exclude()
-  @Column({ type: 'varchar', length: 50, nullable: true, default: null })
+  @Column({ type: 'varchar', length: 20, nullable: true, default: null })
   permission?: string | null;
 
-  @CreateDateColumn({
-    name: 'create_time',
-    type: 'timestamp',
-    comment: '创建时间',
-  })
-  createTime: Date;
-
-  @UpdateDateColumn({
-    name: 'update_time',
-    type: 'timestamp',
-    comment: '更新时间',
-  })
-  updateTime: Date;
-
-  @Column({
-    name: 'create_by',
-    comment: '创建人',
-    nullable: true,
-  })
-  createBy?: string;
-
-  @Column({
-    name: 'update_by',
-    comment: '更新人',
-    nullable: true,
-  })
-  updateBy?: string;
+  @Exclude()
+  @Column({ name: 'is_delete', comment: '删除标志', default: '0' })
+  isDelete: STATUSTYPE;
 }

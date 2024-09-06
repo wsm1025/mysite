@@ -11,6 +11,7 @@ export default {
     deleteDicById: "/dictionary/delete",
     craeteMenu: "/menu/craeteMenu",
     menuFiled: "/menu/field",
+    menuDelete: "/menu/delete",
     gsc: {
         token: "/gsc/token",
         sentence: "/gsc/sentence",

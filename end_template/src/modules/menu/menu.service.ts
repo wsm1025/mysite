@@ -5,8 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Menu } from './entities/menu.entity';
 import { Repository } from 'typeorm';
 import { ApiErrCode, ApiException } from 'src/core/exceptions/api.exception';
-import { User } from '../user/entities/user.entity';
 import { UserInfoDto } from '../user/dto/user-info.dto';
+import { STATUSTYPE } from 'src/enum';
+import { DeleteMenuDto } from './dto/delete-menu.dto';
 function creataDataItem(data = {}) {
   const item = {
     title: '首页',
@@ -56,7 +57,10 @@ export class MenuService {
   }
 
   async getList() {
-    const [data] = await this.menuRepository.findAndCount();
+    const [data] = await this.menuRepository.findAndCount({
+      where: { isDelete: STATUSTYPE.ACTIVE },
+      order: { order: 'ASC' },
+    });
     return data;
   }
 
@@ -105,6 +109,16 @@ export class MenuService {
       throw new InternalServerErrorException(error);
     }
     if (column.affected === 0)
+      throw new ApiException(ApiErrCode.OPERATION_FAILED);
+    return null;
+  }
+
+  async updateDelete(deleteMenuDto: DeleteMenuDto) {
+    const column = await this.menuRepository.update(
+      { id: deleteMenuDto.id },
+      { isDelete: STATUSTYPE.INACTIVE },
+    );
+    if (column.affected == 0)
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
     return null;
   }

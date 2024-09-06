@@ -238,7 +238,7 @@ const selectIcon = () => {
 }
 const chooseEmit = (item) => {
     model.value.form.icon = item.name
-    formRef.value.validate("icon")
+    formRef.value.validate()
 }
 const init = (type, data, method) => {
     model.value.visible = true
