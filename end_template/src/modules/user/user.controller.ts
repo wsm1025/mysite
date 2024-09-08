@@ -12,12 +12,12 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ListUserDto } from './dto/user-info.dto';
+import { UserInfoDto } from './dto/user-info.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { RolesGuard } from 'src/auth/roles/roles.guard';
-import { OPERATIONTYPE, USERROLRTYPE } from 'src/enum';
+import { OPERATIONTYPE } from 'src/enum';
 import { RoleInterceptor } from 'src/core/interceptor/user.interceptor';
+import { FindLimitDto } from 'src/dto/find-limit-dto';
 
 @ApiTags('用户')
 @Controller('user')
@@ -46,8 +46,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_DELETE))
-  @Post('delete')
-  @UseGuards(RolesGuard)
+  @Post('deleteUser')
   delete(@Body('userId') userId) {
     return this.userService.delete(userId);
   }
@@ -58,7 +57,9 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_LIST))
   @Get('getAllUser')
-  async getAllUser(@Query() query: ListUserDto) {
+  async getAllUser(
+    @Query() query: Pick<UserInfoDto, 'userName' | 'role'> & FindLimitDto,
+  ) {
     return this.userService.findAll(query);
   }
 

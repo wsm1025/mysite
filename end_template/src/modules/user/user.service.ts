@@ -4,8 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiException, ApiErrCode } from '../../core/exceptions/api.exception';
 import { User } from './entities/user.entity';
-import { USERROLRTYPE } from 'src/enum';
-import { ListUserDto } from './dto/user-info.dto';
+import { STATUSTYPE } from 'src/enum';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -19,7 +18,7 @@ export class UserService {
     const { userName } = createUser;
     // 判断用户名是否存在
     const existUser = await this.userRepository.findOne({
-      where: { userName, deleteFlag: 0 },
+      where: { userName, isDelete: STATUSTYPE.ACTIVE },
     });
     if (existUser) {
       throw new ApiException(ApiErrCode.USER_EXIST);
@@ -68,24 +67,26 @@ export class UserService {
     if (!user) {
       throw new ApiException(ApiErrCode.USER_NOT_EXIST);
     }
-    if (user.role !== USERROLRTYPE.ADMIN) {
-      throw new ApiException(ApiErrCode.NO_PERMISSIN);
-    }
-    await this.userRepository.update({ userId }, { deleteFlag: 1 });
-    return {
-      message: '删除成功',
-    };
+
+    const column = await this.userRepository.update(
+      { userId },
+      { isDelete: STATUSTYPE.INACTIVE },
+    );
+    if (column.affected == 0)
+      throw new ApiException(ApiErrCode.OPERATION_FAILED);
+    return null;
   }
 
-  async findAll(query: ListUserDto) {
-    // 分页查询
-    const { size = 10, page = 1 } = query;
-    const search = {
-      deleteFlag: 0, // 查询未删除的
+  async findAll(query) {
+    const { size = 10, page = 1, role = '', userName = '' } = query;
+    const where = {
+      isDelete: STATUSTYPE.ACTIVE,
+      ...(role && { role }),
+      ...(userName && { userName }),
     };
     const startSize = (Number(page) - 1) * Number(size) ?? 0;
-    const [userList, total] = await this.userRepository.findAndCount({
-      where: search, // 查询条件
+    const [data, total] = await this.userRepository.findAndCount({
+      where,
       skip: startSize, // 跳过多少条
       take: size, // 获取多少条
       order: {
@@ -93,15 +94,17 @@ export class UserService {
       },
     });
     return {
-      userList,
+      data,
       total,
     };
   }
 
   async findOne(userId: string) {
+    console.log(userId);
     const userInfo = await this.userRepository.findOne({
       where: { userId },
     });
+    console.log(userInfo);
     return userInfo;
   }
 }

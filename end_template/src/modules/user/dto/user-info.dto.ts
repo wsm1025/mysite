@@ -1,8 +1,11 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { FindLimitDto } from '../../../dto/find-limit-dto';
+import { USERROLRTYPE } from 'src/enum';
 
-export class ListUserDto extends PartialType(FindLimitDto) {}
+export class ListUserDto extends PartialType(FindLimitDto) {
+  role?: USERROLRTYPE; // 可选属性
+}
 
 export class UserInfoDto {
   @ApiProperty({ description: '用户名' })
@@ -17,9 +20,6 @@ export class UserInfoDto {
 
   @ApiProperty({ description: '用户邮箱' })
   email: string;
-
-  @ApiProperty({ description: '手机号' })
-  phone: string;
 
   @ApiProperty({ description: '角色' })
   role: string;

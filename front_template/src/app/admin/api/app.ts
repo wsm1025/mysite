@@ -5,9 +5,13 @@ const findDicByParentName = (name, params = {}) => {
     return get(apiMap.findDicByParentName + name, params)
 }
 
-const member = () => {
-    return post(apiMap.member)
+const getAllUser = (params = {}) => {
+    return get(apiMap.getAllUser, params)
 }
+const deleteUser = (params = {}) => {
+    return post(apiMap.deleteUser, params)
+}
+
 const role = () => {
     return post(apiMap.role)
 }
@@ -49,7 +53,8 @@ const menuDelete = (params) => {
 
 export {
     findDicByParentName,
-    member,
+    getAllUser,
+    deleteUser,
     role,
     branch,
     menus,

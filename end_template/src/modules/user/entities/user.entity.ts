@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
-import { USERROLRTYPE } from 'src/enum';
+import { STATUSTYPE, USERROLRTYPE } from 'src/enum';
 
 @Entity('user')
 export class User {
@@ -31,9 +31,6 @@ export class User {
 
   @Column({ comment: '邮箱', nullable: true, length: 20 })
   email: string;
-
-  @Column({ comment: '手机号', nullable: true, length: 11 })
-  phone: string;
 
   @Column({
     comment: '头像',
@@ -70,13 +67,8 @@ export class User {
   updateTime: Date;
 
   @Exclude()
-  @Column({
-    name: 'is_delete',
-    comment: '标签状态 0:未删除 1:删除',
-    type: 'int',
-    default: 0,
-  })
-  deleteFlag: number;
+  @Column({ name: 'is_delete', comment: '删除标志', default: '0' })
+  isDelete: STATUSTYPE;
 
   @BeforeInsert()
   async encryptPwd() {
