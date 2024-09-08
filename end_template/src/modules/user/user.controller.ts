@@ -16,7 +16,7 @@ import { ListUserDto } from './dto/user-info.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/roles/roles.guard';
-import { USERROLRTYPE } from 'src/enum';
+import { OPERATIONTYPE, USERROLRTYPE } from 'src/enum';
 import { RoleInterceptor } from 'src/core/interceptor/user.interceptor';
 
 @ApiTags('用户')
@@ -34,7 +34,8 @@ export class UserController {
   @ApiOperation({ summary: '更新用户' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(ClassSerializerInterceptor) // 不包含密码 @Exclude()的字段
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_EDIT))
   @Post('update')
   update(@Body() updateUser: UpdateUserDto) {
     return this.userService.update(updateUser);
@@ -43,8 +44,8 @@ export class UserController {
   @ApiOperation({ summary: '删除用户' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(ClassSerializerInterceptor) // 不包含密码 @Exclude()的字段
-  @UseInterceptors(new RoleInterceptor(USERROLRTYPE.ADMIN))
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_DELETE))
   @Post('delete')
   @UseGuards(RolesGuard)
   delete(@Body('userId') userId) {
@@ -54,7 +55,8 @@ export class UserController {
   @ApiOperation({ summary: '获取全部用户信息' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(ClassSerializerInterceptor) // 不包含密码 @Exclude()的字段
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_LIST))
   @Get('getAllUser')
   async getAllUser(@Query() query: ListUserDto) {
     return this.userService.findAll(query);
@@ -63,7 +65,8 @@ export class UserController {
   @ApiOperation({ summary: '获取单个用户信息' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(ClassSerializerInterceptor) // 不包含密码 @Exclude()的字段
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_LIST))
   @Get('userInfo')
   async getUserInfo(@Req() req) {
     return this.userService.findOne(req.param.userId);

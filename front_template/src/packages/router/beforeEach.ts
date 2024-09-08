@@ -133,9 +133,10 @@ function updateRouterAll(
                     item.name = item.name || item.path
                     return item
                 })
+                // 排序
                 appStore.treeMenus = toTree({
                     arr: appStore.allMenus.filter((item: any) => item.shows),
-                })
+                }).sort((a, b) => a.order - b.order)
                 createRouterComponent(allMenus)
                 next(to.fullPath)
             })

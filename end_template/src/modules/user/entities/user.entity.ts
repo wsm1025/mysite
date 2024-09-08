@@ -49,6 +49,12 @@ export class User {
   })
   role: string;
 
+  @Column({
+    comment: '操作权限',
+    default: 'user_list,dictionary_list,menu_list',
+  })
+  opreration: string;
+
   @CreateDateColumn({
     name: 'create_time',
     type: 'timestamp',

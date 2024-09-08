@@ -7,11 +7,13 @@ const data = [
     keepAlive: true,
     tabFix: true,
     order: 100,
+    permission: 'ROLE_USER',
   },
   {
     title: '系统设置',
     icon: 'SettingsOutline',
     order: 200,
+    permission: 'ROLE_USER',
   },
   {
     title: '用户管理',
@@ -20,6 +22,7 @@ const data = [
     file: '/view/system/member/index.vue',
     icon: 'TeamOutlined',
     order: 201,
+    permission: 'ROLE_USER',
   },
   {
     title: '菜单管理',
@@ -28,5 +31,6 @@ const data = [
     file: '/view/system/menu/index.vue',
     icon: 'MenuOutlined',
     order: 204,
+    permission: 'ROLE_USER',
   },
 ];

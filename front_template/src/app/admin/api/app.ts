@@ -38,7 +38,7 @@ const deleteDicById = (params) => {
     return post(apiMap.deleteDicById, params)
 }
 const createMenu = (params) => {
-    return post(apiMap.craeteMenu, params)
+    return post(apiMap.createMenu, params)
 }
 const menuFiled = (params) => {
     return post(apiMap.menuFiled, params)

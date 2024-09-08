@@ -9,7 +9,7 @@ export default {
     findDicByParentName: "/dictionary/findDicByParentName/",
     findDicById: "/dictionary/find",
     deleteDicById: "/dictionary/delete",
-    craeteMenu: "/menu/craeteMenu",
+    createMenu: "/menu/createMenu",
     menuFiled: "/menu/field",
     menuDelete: "/menu/delete",
     gsc: {

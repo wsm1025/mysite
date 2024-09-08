@@ -32,4 +32,7 @@ export class UserInfoDto {
 
   @ApiProperty({ description: '用户Id' })
   userId: string;
+
+  @ApiProperty({ description: '权限' })
+  opreration: string;
 }

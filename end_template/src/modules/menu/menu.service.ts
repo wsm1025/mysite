@@ -6,7 +6,7 @@ import { Menu } from './entities/menu.entity';
 import { Repository } from 'typeorm';
 import { ApiErrCode, ApiException } from 'src/core/exceptions/api.exception';
 import { UserInfoDto } from '../user/dto/user-info.dto';
-import { STATUSTYPE } from 'src/enum';
+import { STATUSTYPE, USERROLRTYPE } from 'src/enum';
 import { DeleteMenuDto } from './dto/delete-menu.dto';
 function creataDataItem(data = {}) {
   const item = {
@@ -50,18 +50,19 @@ export class MenuService {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
-    console.log(column);
     if (column.affected === 0)
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
     return null;
   }
 
-  async getList() {
+  async getList(user: UserInfoDto) {
     const [data] = await this.menuRepository.findAndCount({
       where: { isDelete: STATUSTYPE.ACTIVE },
       order: { order: 'ASC' },
     });
-    return data;
+    return user.role === USERROLRTYPE.ADMIN
+      ? data
+      : data.filter((item) => item.permission?.split(',').includes(user.role));
   }
 
   async updateField(updateMenuDto: UpdateMenuDto, userInfo: UserInfoDto) {

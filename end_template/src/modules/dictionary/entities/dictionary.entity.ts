@@ -1,25 +1,23 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { PARENTTYPE, STATUSTYPE } from 'src/enum';
+import { CommonEntity } from 'src/modules/common.entity';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 @Entity('dictionary')
-export class Dictionary {
+export class Dictionary extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
     name: 'dictionary_value',
-    length: 20,
+    length: 30,
     comment: '字典值',
   })
+  @IsNotEmpty({ message: '字典值不能为空' })
   dictionaryValue: string;
 
-  @Column({ name: 'dictionary_name', comment: '字典名称', length: 10 })
+  @Column({ name: 'dictionary_name', comment: '字典名称', length: 20 })
+  @IsNotEmpty({ message: '字典名称不能为空' })
   dictionaryName: string;
 
   @Column({
@@ -31,34 +29,6 @@ export class Dictionary {
   })
   dictionaryDesc?: string;
 
-  @CreateDateColumn({
-    name: 'create_time',
-    type: 'timestamp',
-    comment: '创建时间',
-  })
-  createTime: Date;
-
-  @UpdateDateColumn({
-    name: 'update_time',
-    type: 'timestamp',
-    comment: '更新时间',
-  })
-  updateTime: Date;
-
-  @Column({
-    name: 'create_by',
-    comment: '创建人',
-    nullable: true,
-  })
-  createBy?: string;
-
-  @Column({
-    name: 'update_by',
-    comment: '更新人',
-    nullable: true,
-  })
-  updateBy?: string;
-
   @Exclude()
   @Column({ name: 'is_delete', comment: '删除标志', default: '0' })
   isDelete: STATUSTYPE;
@@ -68,15 +38,18 @@ export class Dictionary {
     comment: '状态  0:启用 1:禁用',
     default: STATUSTYPE.ACTIVE,
   })
+  @IsEnum(STATUSTYPE, { message: 'status 必须是 0 或者 1' })
   status: STATUSTYPE;
 
   @Column({ name: 'parent_id', nullable: true })
-  parentId?: string;
+  @IsNotEmpty({ message: '父级id不能为空' })
+  parentId: string | null;
 
   @Column({
     name: 'parent_type',
     comment: '0:子类 1:父类',
     default: PARENTTYPE.SON,
   })
+  @IsEnum(PARENTTYPE, { message: 'parentType 必须是 0 或者 1' })
   parentType: PARENTTYPE;
 }

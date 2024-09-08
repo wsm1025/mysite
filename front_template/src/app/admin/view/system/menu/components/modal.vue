@@ -204,6 +204,7 @@ const submit = async () => {
             cancel()
             emit("success")
             message.success("操作成功")
+            window.location.reload()
         })
         .finally(() => {
             loading.value = false

@@ -71,6 +71,7 @@ const createColumns = ({ compHandle }): DataTableColumns => {
                             id: row.id,
                         })
                         compHandle.getTableData()
+                        window.location.reload()
                     },
                 })
             },
@@ -113,6 +114,7 @@ const createColumns = ({ compHandle }): DataTableColumns => {
                             id: row.id,
                         })
                         compHandle.getTableData()
+                        window.location.reload()
                     },
                 })
             },
@@ -132,6 +134,7 @@ const createColumns = ({ compHandle }): DataTableColumns => {
                             id: row.id,
                         })
                         compHandle.getTableData()
+                        window.location.reload()
                     },
                 })
             },
@@ -165,6 +168,7 @@ const createColumns = ({ compHandle }): DataTableColumns => {
                                 })
                                 message.success("操作成功")
                                 compHandle.getTableData()
+                                window.location.reload()
                             },
                             negativeText: "取消",
                             positiveText: "确定",
