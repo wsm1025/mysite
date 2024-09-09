@@ -1,6 +1,8 @@
 export default {
     getAllUser: "/user/getAllUser",
     deleteUser: "/user/deleteUser",
+    editUser: "/user/editUser",
+    createUser: "/user/createUser",
     role: "/role",
     branch: "/branch",
     menus: "/menu/getList",

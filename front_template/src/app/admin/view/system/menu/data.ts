@@ -4,13 +4,12 @@ import {
     NIcon,
     NPopconfirm,
     NSwitch,
-    useMessage,
 } from "naive-ui"
 import { h } from "vue"
 import { TYPE } from "../enum"
 import { icons } from "@/packages/config/icon.ts"
 import { menuFiled } from "@/app/admin/api/app"
-const message = useMessage()
+const message = window.$message
 
 const createColumns = ({ compHandle }): DataTableColumns => {
     return [

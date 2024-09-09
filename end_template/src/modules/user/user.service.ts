@@ -100,11 +100,12 @@ export class UserService {
   }
 
   async findOne(userId: string) {
-    console.log(userId);
+    if (!userId) {
+      throw new ApiException(ApiErrCode.USER_NOT_EXIST);
+    }
     const userInfo = await this.userRepository.findOne({
       where: { userId },
     });
-    console.log(userInfo);
     return userInfo;
   }
 }

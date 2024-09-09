@@ -48,7 +48,7 @@ import {
     createDic,
     findDicById,
     deleteDicById,
-} from "@api/app"
+} from "@/app/admin/api/app.ts"
 import dayjs from "dayjs"
 import Modal from "./components/modal.vue"
 import { TYPE } from "../enum.ts"

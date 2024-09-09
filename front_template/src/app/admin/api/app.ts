@@ -1,4 +1,4 @@
-import { get, post } from "@/packages/http/request.ts"
+import { get, post, deleteAction } from "@/packages/http/request.ts"
 import apiMap from "@/app/admin/api/apiMap.ts"
 
 const findDicByParentName = (name, params = {}) => {
@@ -8,8 +8,17 @@ const findDicByParentName = (name, params = {}) => {
 const getAllUser = (params = {}) => {
     return get(apiMap.getAllUser, params)
 }
+
 const deleteUser = (params = {}) => {
-    return post(apiMap.deleteUser, params)
+    return deleteAction(apiMap.deleteUser, params)
+}
+
+const createUser = (params = {}) => {
+    return post(apiMap.createUser, params)
+}
+
+const editUser = (params = {}) => {
+    return post(apiMap.editUser, params)
 }
 
 const role = () => {
@@ -55,6 +64,8 @@ export {
     findDicByParentName,
     getAllUser,
     deleteUser,
+    createUser,
+    editUser,
     role,
     branch,
     menus,

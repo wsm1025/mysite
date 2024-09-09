@@ -8,6 +8,7 @@ import {
   ClassSerializerInterceptor,
   UseGuards,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -46,7 +47,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_DELETE))
-  @Post('deleteUser')
+  @Delete('deleteUser')
   delete(@Body('userId') userId) {
     return this.userService.delete(userId);
   }
@@ -57,7 +58,7 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_LIST))
   @Get('getAllUser')
-  async getAllUser(
+  getAllUser(
     @Query() query: Pick<UserInfoDto, 'userName' | 'role'> & FindLimitDto,
   ) {
     return this.userService.findAll(query);
@@ -69,7 +70,7 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_LIST))
   @Get('userInfo')
-  async getUserInfo(@Req() req) {
-    return this.userService.findOne(req.param.userId);
+  getUserInfo(@Req() req) {
+    return this.userService.findOne(req.user.userId);
   }
 }

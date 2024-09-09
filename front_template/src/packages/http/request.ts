@@ -84,4 +84,11 @@ const post = (url: string, params?: any, config?: AxiosRequestConfig) => {
 const get = (url: string, params?: any, config?: AxiosRequestConfig) => {
     return http.get(url, { params, ...config })
 }
-export { post, get, http as axios }
+const deleteAction = (
+    url: string,
+    params?: any,
+    config?: AxiosRequestConfig
+) => {
+    return http.delete(url, { params, ...config })
+}
+export { post, get, deleteAction, http as axios }
