@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
-import { STATUSTYPE, USERROLRTYPE } from 'src/enum';
+import { OPERATIONTYPE, STATUSTYPE, USERROLRTYPE } from 'src/enum';
 
 @Entity('user')
 export class User {
@@ -48,7 +48,7 @@ export class User {
 
   @Column({
     comment: '操作权限',
-    default: 'user_list,dictionary_list,menu_list',
+    default: Object.values(OPERATIONTYPE).join(','),
   })
   opreration: string;
 

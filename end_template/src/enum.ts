@@ -27,4 +27,27 @@ enum OPERATIONTYPE {
   MENU_DELETE = 'menu_delete',
   MENU_LIST = 'menu_list',
 }
-export { STATUSTYPE, PARENTTYPE, USERROLRTYPE, OPERATIONTYPE };
+
+enum OPERATIONTYPETEXT {
+  USER_ADD = '新增用户',
+  USER_EDIT = '编辑用户',
+  USER_DELETE = '删除用户',
+  USER_LIST = '用户列表',
+
+  DICTIONARY_ADD = '新增字典',
+  DICTIONARY_EDIT = '编辑字典',
+  DICTIONARY_DELETE = '删除字典',
+  DICTIONARY_LIST = '字典列表',
+
+  MENU_ADD = '新增菜单',
+  MENU_EDIT = '编辑菜单',
+  MENU_DELETE = '删除菜单',
+  MENU_LIST = '菜单列表',
+}
+export {
+  STATUSTYPE,
+  PARENTTYPE,
+  USERROLRTYPE,
+  OPERATIONTYPE,
+  OPERATIONTYPETEXT,
+};

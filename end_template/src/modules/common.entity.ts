@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 export class CommonEntity {
@@ -15,6 +16,7 @@ export class CommonEntity {
   })
   updateTime: Date;
 
+  @Exclude()
   @Column({
     name: 'create_by',
     comment: '创建人',
@@ -22,6 +24,7 @@ export class CommonEntity {
   })
   createBy?: string;
 
+  @Exclude()
   @Column({
     name: 'update_by',
     comment: '更新人',
