@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiException, ApiErrCode } from '../../core/exceptions/api.exception';
 import { User } from './entities/user.entity';
-import { STATUSTYPE } from 'src/enum';
+import { OPERATIONTYPE, OPERATIONTYPETEXT, STATUSTYPE } from 'src/enum';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -92,5 +92,14 @@ export class UserService {
       where: { userId },
     });
     return userInfo;
+  }
+
+  getOperationList() {
+    return Object.keys(OPERATIONTYPE).map((key) => {
+      return {
+        value: OPERATIONTYPE[key],
+        text: OPERATIONTYPETEXT[key],
+      };
+    });
   }
 }

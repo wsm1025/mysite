@@ -96,8 +96,9 @@
                     v-model:value="model.form.permission"
                     placeholder="请选择权限"
                     :options="premissionList"
-                /> </n-form-item
-            ><n-form-item label="排序" path="order" required>
+                />
+            </n-form-item>
+            <n-form-item label="排序" path="order" required>
                 <n-input-number
                     v-model:value="model.form.order"
                     button-placement="both"

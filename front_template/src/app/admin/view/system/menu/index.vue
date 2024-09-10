@@ -49,7 +49,6 @@
                         :pagination="compData.pagination"
                         :single-line="false"
                         :loading="compData.loading"
-                        :size="compData.tableSizeValue"
                         :default-expanded-row-keys="[200]"
                     />
                     <template #footer>

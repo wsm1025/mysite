@@ -145,6 +145,11 @@ const validateUrl = (url: string) => {
     )
 }
 
+const validateEmail = (email: string) => {
+    return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+        email
+    )
+}
 export {
     toTree,
     getObjectPath,
@@ -152,4 +157,5 @@ export {
     clipboardCopy,
     rdmRgbColor,
     validateUrl,
+    validateEmail,
 }

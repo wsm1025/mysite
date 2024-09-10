@@ -69,4 +69,12 @@ export class UserController {
   getUserInfo(@Req() req) {
     return this.userService.findOne(req.user.userId);
   }
+
+  @ApiOperation({ summary: '获取页面权限' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Get('operationList')
+  getOpreation() {
+    return this.userService.getOperationList();
+  }
 }

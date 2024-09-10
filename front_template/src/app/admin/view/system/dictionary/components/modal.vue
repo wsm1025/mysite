@@ -71,8 +71,6 @@
 <script lang="ts" setup>
 import { ref, defineExpose } from "vue"
 import { TYPE } from "../../enum.ts"
-import { useMessage } from "naive-ui"
-const message = useMessage()
 const emit = defineEmits(["success"])
 const formRef = ref()
 const model = ref({
@@ -132,7 +130,7 @@ const submit = async () => {
                     : model.value.form.parentId,
         })
         .then(() => {
-            message.success("操作成功")
+            window.$message.success("操作成功")
             cancel()
             emit("success")
         })

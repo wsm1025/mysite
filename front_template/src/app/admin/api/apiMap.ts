@@ -3,6 +3,7 @@ export default {
     deleteUser: "/user/deleteUser",
     editUser: "/user/editUser",
     createUser: "/user/createUser",
+    operationList: "/user/operationList",
     role: "/role",
     branch: "/branch",
     menus: "/menu/getList",

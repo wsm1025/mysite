@@ -4,6 +4,9 @@ import apiMap from "@/app/admin/api/apiMap.ts"
 const findDicByParentName = (name, params = {}) => {
     return get(apiMap.findDicByParentName + name, params)
 }
+const getOperationList = () => {
+    return get(apiMap.operationList)
+}
 
 const getAllUser = (params = {}) => {
     return get(apiMap.getAllUser, params)
@@ -62,6 +65,7 @@ const menuDelete = (params) => {
 
 export {
     findDicByParentName,
+    getOperationList,
     getAllUser,
     deleteUser,
     createUser,

@@ -9,10 +9,10 @@ export class RoleInterceptor implements NestInterceptor {
     next: CallHandler<any>,
   ): Observable<any> {
     const { user } = context.switchToHttp().getRequest();
-    user.opreration = user?.opreration.split(',');
-    if (user.opreration.includes(this.requiredRole)) {
+    user.operationList = user?.operationList.split(',');
+    if (user.operationList.includes(this.requiredRole)) {
       return next.handle();
-    } else if (!user.opreration.includes(this.requiredRole)) {
+    } else if (!user.operationList.includes(this.requiredRole)) {
       throw new ApiException(ApiErrCode.NO_PERMISSIN);
     }
   }

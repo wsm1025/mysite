@@ -60,7 +60,7 @@ export class User {
     comment: '操作权限',
     default: Object.values(OPERATIONTYPE).join(','),
   })
-  opreration: string;
+  operationList: string;
 
   @CreateDateColumn({
     name: 'create_time',
