@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { CommonEntity } from 'src/modules/common.entity';
 import { STATUSTYPE } from 'src/enum';
+import { IsNotEmpty, Length } from 'class-validator';
 
 @Entity('menu')
 export class Menu extends CommonEntity {
@@ -9,6 +10,10 @@ export class Menu extends CommonEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 20 })
+  @IsNotEmpty({ message: '菜单名不能为空' })
+  @Length(3, 20, {
+    message: `菜单名称长度必须是$constraint1到$constraint2之间`,
+  })
   title: string;
 
   @Column({ type: 'varchar', length: 60, nullable: true })
@@ -33,9 +38,11 @@ export class Menu extends CommonEntity {
   shows?: boolean;
 
   @Column({ type: 'boolean', default: false })
+  @IsNotEmpty({ message: '是否可缓存不能为空' })
   keepAlive: boolean;
 
   @Column({ type: 'boolean', default: false })
+  @IsNotEmpty({ message: 'tab是否可固定不能为空' })
   tabFix: boolean;
 
   @Column({ type: 'boolean', default: false })
@@ -50,6 +57,10 @@ export class Menu extends CommonEntity {
   permission?: string | null;
 
   @Exclude()
-  @Column({ name: 'is_delete', comment: '删除标志', default: '0' })
+  @Column({
+    name: 'is_delete',
+    comment: '删除标志',
+    default: STATUSTYPE.ACTIVE,
+  })
   isDelete: STATUSTYPE;
 }

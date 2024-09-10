@@ -22,11 +22,11 @@ import { FindLimitDto } from 'src/dto/find-limit-dto';
 
 @ApiTags('用户')
 @Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: '注册用户' })
-  @UseInterceptors(ClassSerializerInterceptor) // 不包含密码 @Exclude()的字段
   @Post('register')
   register(@Body() createUser: CreateUserDto) {
     return this.userService.register(createUser);
@@ -35,7 +35,6 @@ export class UserController {
   @ApiOperation({ summary: '更新用户' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_EDIT))
   @Post('update')
   update(@Body() updateUser: UpdateUserDto) {
@@ -45,17 +44,15 @@ export class UserController {
   @ApiOperation({ summary: '删除用户' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_DELETE))
   @Delete('deleteUser')
-  delete(@Body('userId') userId) {
-    return this.userService.delete(userId);
+  delete(@Body('userId') userId, @Req() req) {
+    return this.userService.delete(userId, req.user);
   }
 
   @ApiOperation({ summary: '获取全部用户信息' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_LIST))
   @Get('getAllUser')
   getAllUser(
@@ -67,8 +64,7 @@ export class UserController {
   @ApiOperation({ summary: '获取单个用户信息' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(ClassSerializerInterceptor)
-  @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_LIST))
+  @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_ONE))
   @Get('userInfo')
   getUserInfo(@Req() req) {
     return this.userService.findOne(req.user.userId);

@@ -39,40 +39,28 @@ export class UserService {
     if (!user) {
       throw new ApiException(ApiErrCode.USER_NOT_EXIST);
     }
-    const updateFields = {
-      ...updateUser,
-    };
-    // 排除的key
-    const excludedProperties = [
-      'userName',
-      'createTime',
-      'role',
-      'userId',
-      'password',
-      'updateTime',
-    ];
-    for (const prop of excludedProperties) {
-      delete updateFields[prop];
-    }
     // 更新符合条件的记录
-    await this.userRepository.update({ userId }, updateFields);
-    return {
-      message: '更新成功',
-    };
+    const result = await this.userRepository.update({ userId }, updateUser);
+    if (result.affected === 0) {
+      throw new ApiException(ApiErrCode.OPERATION_FAILED);
+    }
+    return null;
   }
-  async delete(userId) {
+  async delete(userId, nowUser) {
+    if (userId === nowUser.userId) {
+      throw new ApiException(ApiErrCode.OPERATION_FAILED);
+    }
     const user = await this.userRepository.findOne({
       where: { userId },
     });
     if (!user) {
       throw new ApiException(ApiErrCode.USER_NOT_EXIST);
     }
-
     const column = await this.userRepository.update(
       { userId },
       { isDelete: STATUSTYPE.INACTIVE },
     );
-    if (column.affected == 0)
+    if (column.affected === 0)
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
     return null;
   }
@@ -100,9 +88,6 @@ export class UserService {
   }
 
   async findOne(userId: string) {
-    if (!userId) {
-      throw new ApiException(ApiErrCode.USER_NOT_EXIST);
-    }
     const userInfo = await this.userRepository.findOne({
       where: { userId },
     });

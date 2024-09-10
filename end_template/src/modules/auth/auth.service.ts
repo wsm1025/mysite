@@ -10,7 +10,6 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  // 生成token
   async createToken(user: Partial<User>) {
     return this.jwtService.sign(user);
   }

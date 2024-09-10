@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { PARENTTYPE, STATUSTYPE } from 'src/enum';
 import { CommonEntity } from 'src/modules/common.entity';
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, Length } from 'class-validator';
 @Entity('dictionary')
 export class Dictionary extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -14,10 +14,16 @@ export class Dictionary extends CommonEntity {
     comment: '字典值',
   })
   @IsNotEmpty({ message: '字典值不能为空' })
+  @Length(3, 30, {
+    message: `字典名称长度必须是$constraint1到$constraint2之间`,
+  })
   dictionaryValue: string;
 
   @Column({ name: 'dictionary_name', comment: '字典名称', length: 20 })
   @IsNotEmpty({ message: '字典名称不能为空' })
+  @Length(3, 20, {
+    message: `字典名称长度必须是$constraint1到$constraint2之间`,
+  })
   dictionaryName: string;
 
   @Column({

@@ -16,6 +16,7 @@ enum OPERATIONTYPE {
   USER_EDIT = 'user_edit',
   USER_DELETE = 'user_delete',
   USER_LIST = 'user_list',
+  USER_ONE = 'user_one',
 
   DICTIONARY_ADD = 'dictionary_add',
   DICTIONARY_EDIT = 'dictionary_edit',
@@ -33,6 +34,7 @@ enum OPERATIONTYPETEXT {
   USER_EDIT = '编辑用户',
   USER_DELETE = '删除用户',
   USER_LIST = '用户列表',
+  USER_ONE = '单个用户',
 
   DICTIONARY_ADD = '新增字典',
   DICTIONARY_EDIT = '编辑字典',

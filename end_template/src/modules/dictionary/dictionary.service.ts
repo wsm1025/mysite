@@ -67,7 +67,6 @@ export class DictionaryService {
 
   async findAll(parentType = '0,1', keyWord?: string) {
     const splitParentType = parentType.split(',');
-
     // 初始化查询条件
     const query = this.dictionaryRepository
       .createQueryBuilder('dictionary')
@@ -139,21 +138,16 @@ export class DictionaryService {
       ...(parentType && { parentType }),
       parentId,
     };
-    let column;
-    try {
-      column = await this.dictionaryRepository.update({ id }, updateData);
-      if (
-        record.parentType == PARENTTYPE.FATHRER &&
-        status == STATUSTYPE.INACTIVE
-      ) {
-        // 更新所有parentId=id的字典
-        await this.dictionaryRepository.update(
-          { parentId: id },
-          { status: STATUSTYPE.INACTIVE },
-        );
-      }
-    } catch (error) {
-      throw new InternalServerErrorException(error);
+    const column = await this.dictionaryRepository.update({ id }, updateData);
+    if (
+      record.parentType == PARENTTYPE.FATHRER &&
+      status == STATUSTYPE.INACTIVE
+    ) {
+      // 更新所有parentId=id的字典
+      await this.dictionaryRepository.update(
+        { parentId: id },
+        { status: STATUSTYPE.INACTIVE },
+      );
     }
     if (column.affected === 0)
       throw new ApiException(ApiErrCode.OPERATION_FAILED);

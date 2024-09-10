@@ -9,6 +9,7 @@ import {
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 import { OPERATIONTYPE, STATUSTYPE, USERROLRTYPE } from 'src/enum';
+import { Length } from 'class-validator';
 
 @Entity('user')
 export class User {
@@ -16,6 +17,9 @@ export class User {
   userId: string;
 
   @Column({ name: 'user_name', length: 10, comment: '用户名' })
+  @Length(3, 10, {
+    message: `用户名长度必须是$constraint1到$constraint2之间`,
+  })
   userName: string;
 
   @Column({
@@ -27,9 +31,15 @@ export class User {
 
   @Exclude()
   @Column({ comment: '密码', length: 100 })
+  @Length(6, 100, {
+    message: `密码必须是$constraint1到$constraint2之间`,
+  })
   passWord: string;
 
   @Column({ comment: '邮箱', nullable: true, length: 20 })
+  @Length(6, 20, {
+    message: `密码必须是$constraint1到$constraint2之间`,
+  })
   email: string;
 
   @Column({
@@ -67,7 +77,11 @@ export class User {
   updateTime: Date;
 
   @Exclude()
-  @Column({ name: 'is_delete', comment: '删除标志', default: '0' })
+  @Column({
+    name: 'is_delete',
+    comment: '删除标志',
+    default: STATUSTYPE.ACTIVE,
+  })
   isDelete: STATUSTYPE;
 
   @BeforeInsert()
@@ -75,7 +89,7 @@ export class User {
     if (!this.passWord) return;
     this.passWord = await bcrypt.hashSync(this.passWord);
   }
-  // 都会执行
+
   @BeforeInsert()
   setNickName() {
     // 设置昵称

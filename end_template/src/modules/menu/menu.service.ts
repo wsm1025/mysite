@@ -39,19 +39,15 @@ export class MenuService {
   ) {}
 
   async create(createMenuDto: CreateMenuDto, userInfo: UserInfoDto) {
-    const newMenu = await this.menuRepository.create({
+    const newMenu = this.menuRepository.create({
       ...createMenuDto,
       createBy: userInfo.userName,
       updateBy: userInfo.userName,
     });
-    let column;
-    try {
-      column = await this.menuRepository.save(newMenu);
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-    if (column.affected === 0)
+    const savedMenu = await this.menuRepository.save(newMenu);
+    if (!savedMenu) {
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
+    }
     return null;
   }
 
@@ -66,51 +62,15 @@ export class MenuService {
   }
 
   async updateField(updateMenuDto: UpdateMenuDto, userInfo: UserInfoDto) {
-    const {
-      id,
-      title,
-      path,
-      file,
-      icon,
-      isIframe,
-      url,
-      shows,
-      keepAlive,
-      tabFix,
-      tabHidden,
-      order,
-      permission,
-    } = updateMenuDto;
+    const { id, ...updateData } = updateMenuDto;
 
-    const updateData: Omit<UpdateMenuDto, 'id'> = {
-      title,
-      path,
-      file,
-      icon,
-      isIframe,
-      url,
-      shows,
-      keepAlive,
-      tabFix,
-      tabHidden,
-      order,
-      permission,
-    };
-    let column;
-    try {
-      column = await this.menuRepository.update(
-        { id },
-        {
-          ...updateData,
-          createBy: userInfo.userName,
-          updateBy: userInfo.userName,
-        },
-      );
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-    if (column.affected === 0)
+    const result = await this.menuRepository.update(id, {
+      ...updateData,
+      updateBy: userInfo.userName,
+    });
+    if (result.affected === 0) {
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
+    }
     return null;
   }
 
