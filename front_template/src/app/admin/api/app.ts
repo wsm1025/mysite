@@ -1,9 +1,14 @@
 import { get, post, deleteAction } from "@/packages/http/request.ts"
 import apiMap from "@/app/admin/api/apiMap.ts"
 
+const uploadFile = () => {
+    return "/api" + apiMap.uploadFile
+}
+
 const findDicByParentName = (name, params = {}) => {
     return get(apiMap.findDicByParentName + name, params)
 }
+
 const getOperationList = () => {
     return get(apiMap.operationList)
 }
@@ -64,6 +69,7 @@ const menuDelete = (params) => {
 }
 
 export {
+    uploadFile,
     findDicByParentName,
     getOperationList,
     getAllUser,

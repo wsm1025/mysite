@@ -2,13 +2,24 @@
     <n-grid cols="24" x-gap="10" item-responsive responsive="screen">
         <n-grid-item span="24 m:24 l:24">
             <n-space :wrap-item="false">
-                <n-card :segmented="{content: true,footer:true}" footer-style="padding:10px"
-                        content-style="padding:0px;">
+                <n-card
+                    :segmented="{ content: true, footer: true }"
+                    footer-style="padding:10px"
+                    content-style="padding:0px;"
+                >
                     <template #header>
                         <n-space>
-                            <n-button color="#52C41A" @click="compHandle.add()">新增数据</n-button>
-                            <n-button color="#ff4d4f" @click="compHandle.dels()">删除数据</n-button>
-                            <n-button color="#1890ff" :loading="compData.loading" @click="compHandle.getTableData">
+                            <n-button color="#52C41A" @click="compHandle.add()"
+                                >新增数据</n-button
+                            >
+                            <n-button color="#ff4d4f" @click="compHandle.dels()"
+                                >删除数据</n-button
+                            >
+                            <n-button
+                                color="#1890ff"
+                                :loading="compData.loading"
+                                @click="compHandle.getTableData"
+                            >
                                 刷新数据
                             </n-button>
                         </n-space>
@@ -32,7 +43,7 @@
                             size="large"
                             show-quick-jumper
                             show-size-picker
-                            style="justify-content: flex-end;flex: 1"
+                            style="justify-content: flex-end; flex: 1"
                         />
                     </template>
                 </n-card>
@@ -42,13 +53,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive, ref} from "vue"
-import {useMessage} from "naive-ui"
-import type {FormInst} from "naive-ui"
-import {branch} from "@/app/admin/api/app.ts"
-import {createColumns, treeData, tableSize} from "./data.ts"
-import {useRouter} from "vue-router"
-import {toTree} from "@/packages/utils/utils.ts"
+import { defineComponent, reactive, ref } from "vue"
+import { useMessage } from "naive-ui"
+import type { FormInst } from "naive-ui"
+import { branch } from "@/app/admin/api/app.ts"
+import { createColumns, treeData, tableSize } from "./data.ts"
+import { useRouter } from "vue-router"
+import { toTree } from "@/packages/utils/utils.ts"
 
 export default defineComponent({
     setup() {
@@ -66,26 +77,30 @@ export default defineComponent({
             sourceColumns: [],
             columnsOptions: [],
             columnsOptionsValue: [],
-            searchForm: {userName: ""},
+            searchForm: { userName: "" },
             pagination: false,
             rowKey: (row: any) => row.id,
-            checkedRowKeys: []
+            checkedRowKeys: [],
         })
         const compHandle = reactive({
             getTableData() {
                 compData.loading = true
-                branch().then((res) => {
-                    compData.tableData = toTree({arr: res.data})
-                }).finally(() => {
-                    compData.loading = false
-                })
+                branch()
+                    .then((res) => {
+                        compData.tableData = toTree({ arr: res.data })
+                    })
+                    .finally(() => {
+                        compData.loading = false
+                    })
             },
             del(row) {
                 message.success(`模拟演示，删除成功，${row.id}`)
             },
             dels() {
                 if (compData.checkedRowKeys.length) {
-                    message.success(`模拟演示，删除成功，${compData.checkedRowKeys.join(",")}`)
+                    message.success(
+                        `模拟演示，删除成功，${compData.checkedRowKeys.join(",")}`
+                    )
                 } else {
                     message.warning("请选择要删除的项")
                 }
@@ -99,31 +114,35 @@ export default defineComponent({
             check(rowKeys: any) {
                 compData.checkedRowKeys = rowKeys
             },
-            tableSize() {
-
-            },
+            tableSize() {},
             handleColumnsOptions(value: (string | number)[]) {
-                compData.columns = compData.sourceColumns.filter((item) => value.indexOf(item.key) !== -1)
+                compData.columns = compData.sourceColumns.filter(
+                    (item) => value.indexOf(item.key) !== -1
+                )
             },
             search() {
                 message.success("模拟演示搜索")
-            }
+            },
         })
-        compData.sourceColumns = createColumns({compHandle})
+        compData.sourceColumns = createColumns({ compHandle })
         compData.columns = compData.sourceColumns
-        compData.columnsOptionsValue = compData.sourceColumns.map((item) => item.key)
-        compData.columnsOptions = compData.sourceColumns.filter((item) => item.type !== "selection").map((item) => {
-            if (item.key === "actions") {
-                item.disabled = true
-            }
-            return item
-        })
+        compData.columnsOptionsValue = compData.sourceColumns.map(
+            (item) => item.key
+        )
+        compData.columnsOptions = compData.sourceColumns
+            .filter((item) => item.type !== "selection")
+            .map((item) => {
+                if (item.key === "actions") {
+                    item.disabled = true
+                }
+                return item
+            })
         compHandle.getTableData()
         return {
             searchFormRef,
             compData,
             compHandle,
         }
-    }
+    },
 })
 </script>

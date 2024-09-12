@@ -2,6 +2,7 @@ export default {
     getAllUser: "/user/getAllUser",
     deleteUser: "/user/deleteUser",
     editUser: "/user/editUser",
+    uploadFile: "/common/uploadFile",
     createUser: "/user/createUser",
     operationList: "/user/operationList",
     role: "/role",

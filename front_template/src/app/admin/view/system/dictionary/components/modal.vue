@@ -92,28 +92,28 @@ const rules = ref({
         {
             required: true,
             message: "请输入字典名称",
-            trigger: "blur",
+            trigger: ["blur", "change"],
         },
     ],
     dictionaryValue: [
         {
             required: true,
             message: "请输入字典值",
-            trigger: "blur",
+            trigger: ["blur", "change"],
         },
     ],
     status: [
         {
             required: true,
             message: "请选择是否启用",
-            trigger: "blur",
+            trigger: ["blur", "change"],
         },
     ],
     parentId: [
         {
             required: model.value.form.parentType == "1",
             message: "请选择父级",
-            trigger: "blur",
+            trigger: ["blur", "change"],
         },
     ],
 })

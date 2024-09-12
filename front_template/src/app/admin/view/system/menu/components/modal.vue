@@ -165,27 +165,27 @@ const rules = computed(() => {
             {
                 required: true,
                 message: "请输入标题",
-                trigger: "blur",
+                trigger: ["blur", "change"],
             },
         ],
         icon: [
             {
                 required: true,
                 message: "请选择图标",
-                trigger: "blur",
+                trigger: ["blur", "change"],
             },
         ],
         pid: [
             {
                 required: true,
                 message: "请选择父级",
-                trigger: "blur",
+                trigger: ["blur", "change"],
             },
         ],
         url: {
             required: model.value.form.isIframe,
             message: "请输入外链地址",
-            trigger: "blur",
+            trigger: ["blur", "change"],
             validator: (rule, value) => {
                 return validateUrl(value)
             },

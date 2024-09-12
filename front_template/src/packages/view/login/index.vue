@@ -297,7 +297,7 @@ export default defineComponent({
                     {
                         required: true,
                         message: "请输入你的用户",
-                        trigger: "blur",
+                        trigger: ["blur", "change"],
                     },
                 ],
                 email: [
@@ -319,21 +319,21 @@ export default defineComponent({
                                 }
                             }
                         },
-                        trigger: "blur",
+                        trigger: ["blur", "change"],
                     },
                 ],
                 code: [
                     {
                         required: true,
                         message: "请输入验证码",
-                        trigger: "blur",
+                        trigger: ["blur", "change"],
                     },
                 ],
                 passWord: [
                     {
                         required: true,
                         message: "输入用户名密码",
-                        trigger: "blur",
+                        trigger: ["blur", "change"],
                     },
                 ],
             },

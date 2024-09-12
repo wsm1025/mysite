@@ -24,6 +24,7 @@
                     v-model:value="model.form.userName"
                     maxlength="10"
                     placeholder="请输入用户名"
+                    :disabled="Boolean(model.form?.userId)"
                 />
             </n-form-item>
             <n-form-item path="nickName" label="昵称">
@@ -33,7 +34,30 @@
                     placeholder="请输入昵称"
                 />
             </n-form-item>
-            <n-form-item path="avatar" label="头像"> </n-form-item>
+            <n-form-item path="avatar" label="头像">
+                <n-upload
+                    :action="uploadFile()"
+                    :headers="{
+                        authorization: access_token,
+                    }"
+                    :default-file-list="
+                        model.form.avatar
+                            ? [
+                                  {
+                                      id: model.form.avatar,
+                                      url: model.form.avatar,
+                                      status: 'finished',
+                                  },
+                              ]
+                            : []
+                    "
+                    list-type="image-card"
+                    :max="1"
+                    @finish="handleFinish"
+                >
+                    点击上传
+                </n-upload>
+            </n-form-item>
             <n-form-item path="email" label="邮箱">
                 <n-input
                     v-model:value="model.form.email"
@@ -63,9 +87,16 @@
 <script lang="ts" setup>
 import { ref, defineExpose } from "vue"
 import { TYPE } from "../../enum"
-import { findDicByParentName, getOperationList } from "@/app/admin/api/app.ts"
+import {
+    findDicByParentName,
+    getOperationList,
+    uploadFile,
+} from "@/app/admin/api/app.ts"
 import { validateEmail } from "@/packages/utils/utils.ts"
+import locaStore from "@/packages/utils/locaStore.ts"
+import { UploadFileInfo } from "naive-ui"
 
+const access_token = locaStore.get("access_token")
 const emit = defineEmits(["success"])
 const formRef = ref()
 const operationOptions = ref([])
@@ -90,7 +121,7 @@ const model = ref({
         userName: "",
         nickName: "",
         avatar: "",
-        operationList: [],
+        operationList: undefined,
         role: undefined,
         email: "",
     },
@@ -103,37 +134,38 @@ const rules = {
         {
             required: true,
             message: "请输入用户名",
-            trigger: "blur",
+            trigger: ["blur", "input"],
         },
     ],
     avatar: [
         {
             required: true,
             message: "请上传头像",
-            trigger: "blur",
+            trigger: ["blur", "change"],
         },
     ],
     role: [
         {
             required: true,
             message: "请选择角色",
-            trigger: "blur",
+            trigger: ["blur", "change"],
         },
     ],
     email: [
         {
             message: "请输入正确的邮箱",
-            trigger: "blur",
+            trigger: ["blur", "input"],
             validator: (rule, value) => {
-                return validateEmail(value)
+                return value && validateEmail(value)
             },
         },
     ],
     operationList: [
         {
+            type: "array",
             required: true,
             message: "请选择权限",
-            trigger: "blur",
+            trigger: ["blur", "change"],
         },
     ],
 }
@@ -161,6 +193,17 @@ const cancel = () => {
         title: "",
         methods: () => {},
     }
+}
+const handleFinish = ({
+    file,
+    event,
+}: {
+    file: UploadFileInfo
+    event?: ProgressEvent
+}) => {
+    model.value.form.avatar = JSON.parse(
+        (event?.target as XMLHttpRequest).response
+    ).data.url
 }
 const init = (type, data, method) => {
     model.value.visible = true
