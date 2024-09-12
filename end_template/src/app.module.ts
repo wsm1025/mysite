@@ -6,6 +6,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DictionaryModule } from './modules/dictionary/dictionary.module';
 import { MenuModule } from './modules/menu/menu.module';
+import { CommonModule } from './modules/common/common.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { MenuModule } from './modules/menu/menu.module';
     UserModule,
     DictionaryModule,
     MenuModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],

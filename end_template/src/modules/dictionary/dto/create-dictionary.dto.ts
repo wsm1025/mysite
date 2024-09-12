@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
 import { PARENTTYPE, STATUSTYPE } from 'src/enum';
-import { CommonEntity } from 'src/modules/common.entity';
+import { CommonEntity } from 'src/modules/base.entity';
 
 export class CreateDictionaryDto extends CommonEntity {
   @ApiProperty({ description: '字典值' })

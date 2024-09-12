@@ -5,25 +5,25 @@ import { TransformInterceptor } from './core/interceptor/transform.interceptor';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { join } from 'path';
 
 const PREFIX = 'docs';
 const POST = 3000;
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.setGlobalPrefix('api'); // 设置全局路由前缀
-  app.useGlobalFilters(new HttpExceptionFilter()); // 全局注册过滤器
-  app.useGlobalInterceptors(new TransformInterceptor()); //全局注册拦截器
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-    }),
-  ); // 全局注册验证管道
-  // 设置静态资源 express
-  app.useStaticAssets('public', {
-    prefix: '/static', // 一定不可以省略 '/'
-  });
-
+  app
+    .setGlobalPrefix('api')
+    .useGlobalFilters(new HttpExceptionFilter())
+    .useGlobalInterceptors(new TransformInterceptor())
+    .useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+      }),
+    )
+    .useStaticAssets(join(__dirname, '..', 'public'), {
+      prefix: '/public/',
+    });
   // 设置swagger文档
   const config = new DocumentBuilder()
     .setTitle('管理后台')

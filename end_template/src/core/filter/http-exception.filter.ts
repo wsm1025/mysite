@@ -5,7 +5,6 @@ import {
   HttpException,
   UnauthorizedException,
   ForbiddenException,
-  Logger,
   HttpStatus,
 } from '@nestjs/common';
 import { ApiException } from '../exceptions/api.exception';
@@ -13,8 +12,6 @@ import { QueryFailedError } from 'typeorm';
 
 @Catch(HttpException, QueryFailedError)
 export class HttpExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(HttpExceptionFilter.name);
-
   catch(exception: HttpException | QueryFailedError, host: ArgumentsHost) {
     const ctx = host.switchToHttp(); // 获取请求上下文
     const response = ctx.getResponse(); // 获取请求上下文中的 response 对象
@@ -33,25 +30,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const params = request.params; // 路由参数
     const query = request.query; // 查询参数
     const body = request.body; // 请求体
-    // 记录日志
-    this.logger.error(
-      `HTTP Status: ${status} Error Message: ${
-        exception instanceof HttpException ? exception.message : exception
-      }`,
-    );
-    this.logger.error(
-      `Request Method: ${method}, URL: ${url}, Route Params: ${JSON.stringify(
-        params,
-      )}, Query Params: ${JSON.stringify(
-        query,
-      )}, Request Body: ${JSON.stringify(body)}`,
-    );
-    if (exception instanceof HttpException && exception.stack) {
-      this.logger.error(`Stack Trace: ${exception.stack}`);
-    } else if (exception instanceof QueryFailedError) {
-      this.logger.error(`Query Failed Error: ${exception.message}`);
-    }
-
     // 处理异常响应
     if (exception instanceof ApiException) {
       // 业务 API 异常
@@ -81,7 +59,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       // 数据库查询失败
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         code: HttpStatus.INTERNAL_SERVER_ERROR,
-        msg: `数据库查询失败，请稍后重试`,
+        msg: `数据库查询失败，请稍后重试,ERROR: ${exception.message}`,
       });
     } else {
       // 其他异常
@@ -90,7 +68,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
         msg:
           typeof exceptionResponse === 'string'
             ? exceptionResponse
-            : exceptionResponse.message?.join(',') || exception.message,
+            : Array.isArray(exceptionResponse.message)
+            ? exceptionResponse.message.join(',')
+            : exceptionResponse.message || exception.message,
       });
     }
   }

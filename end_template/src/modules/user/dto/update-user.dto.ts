@@ -22,5 +22,5 @@ export class UpdateUserDto {
   role?: string;
 
   @IsOptional()
-  opreration?: string;
+  operationList?: any;
 }

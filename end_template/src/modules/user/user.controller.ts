@@ -36,7 +36,7 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_EDIT))
-  @Post('update')
+  @Post('editUser')
   update(@Body() updateUser: UpdateUserDto) {
     return this.userService.update(updateUser);
   }
@@ -46,7 +46,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.USER_DELETE))
   @Delete('deleteUser')
-  delete(@Body('userId') userId, @Req() req) {
+  delete(@Query('userId') userId, @Req() req) {
     return this.userService.delete(userId, req.user);
   }
 

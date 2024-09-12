@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { CommonEntity } from 'src/modules/common.entity';
+import { CommonEntity } from 'src/modules/base.entity';
 import { STATUSTYPE } from 'src/enum';
 import { IsNotEmpty, Length } from 'class-validator';
 

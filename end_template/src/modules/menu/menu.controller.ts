@@ -6,6 +6,7 @@ import {
   UseInterceptors,
   Req,
   ClassSerializerInterceptor,
+  HttpCode,
 } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
@@ -29,6 +30,7 @@ export class MenuController {
     return this.menuService.create(createMenuDto, req.user);
   }
 
+  @HttpCode(200)
   @ApiOperation({ summary: '获取列表' })
   @UseInterceptors(new RoleInterceptor(OPERATIONTYPE.MENU_LIST))
   @Post('getList')

@@ -9,8 +9,6 @@ import { JwtStorage } from './jwt.strategy'; // 自定义的jwt策略
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserService } from 'src/modules/user/user.service';
-import { Dictionary } from 'src/modules/dictionary/entities/dictionary.entity';
-import { DictionaryService } from 'src/modules/dictionary/dictionary.service';
 
 const jwtModule = JwtModule.registerAsync({
   inject: [ConfigService],
@@ -23,19 +21,9 @@ const jwtModule = JwtModule.registerAsync({
 });
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User, Dictionary]),
-    PassportModule,
-    jwtModule,
-  ],
+  imports: [TypeOrmModule.forFeature([User]), PassportModule, jwtModule],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    LocalStorage,
-    JwtStorage,
-    UserService,
-    DictionaryService,
-  ],
+  providers: [AuthService, LocalStorage, JwtStorage, UserService],
   exports: [jwtModule],
 })
 export class AuthModule {}

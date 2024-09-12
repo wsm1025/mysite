@@ -34,5 +34,5 @@ export class UserInfoDto {
   userId: string;
 
   @ApiProperty({ description: '权限' })
-  opreration: string;
+  operationList: string;
 }

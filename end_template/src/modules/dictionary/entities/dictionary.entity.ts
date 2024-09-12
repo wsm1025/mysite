@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { PARENTTYPE, STATUSTYPE } from 'src/enum';
-import { CommonEntity } from 'src/modules/common.entity';
+import { CommonEntity } from 'src/modules/base.entity';
 import { IsEnum, IsNotEmpty, Length } from 'class-validator';
 @Entity('dictionary')
 export class Dictionary extends CommonEntity {

@@ -46,10 +46,19 @@ enum OPERATIONTYPETEXT {
   MENU_DELETE = '删除菜单',
   MENU_LIST = '菜单列表',
 }
+
+enum COMMONTYPE {
+  IP = 'ip',
+  SQL = 'sql',
+  UPLOADFILE = 'uploadFile',
+  OTHER = 'other',
+}
+
 export {
   STATUSTYPE,
   PARENTTYPE,
   USERROLRTYPE,
   OPERATIONTYPE,
   OPERATIONTYPETEXT,
+  COMMONTYPE,
 };

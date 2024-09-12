@@ -14,7 +14,7 @@ export class CommonEntity {
     type: 'timestamp',
     comment: '更新时间',
   })
-  updateTime: Date;
+  updateTime?: Date;
 
   @Exclude()
   @Column({

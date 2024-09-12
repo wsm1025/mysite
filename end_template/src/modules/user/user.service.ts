@@ -4,7 +4,12 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiException, ApiErrCode } from '../../core/exceptions/api.exception';
 import { User } from './entities/user.entity';
-import { OPERATIONTYPE, OPERATIONTYPETEXT, STATUSTYPE } from 'src/enum';
+import {
+  OPERATIONTYPE,
+  OPERATIONTYPETEXT,
+  STATUSTYPE,
+  USERROLRTYPE,
+} from 'src/enum';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -39,16 +44,26 @@ export class UserService {
     if (!user) {
       throw new ApiException(ApiErrCode.USER_NOT_EXIST);
     }
+    updateUser.operationList?.length &&
+      (updateUser.operationList = updateUser.operationList.join(','));
     // 更新符合条件的记录
-    const result = await this.userRepository.update({ userId }, updateUser);
+    const result = await this.userRepository.update(
+      { userId },
+      { ...updateUser },
+    );
     if (result.affected === 0) {
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
     }
     return null;
   }
   async delete(userId, nowUser) {
+    // 不能删除自己
     if (userId === nowUser.userId) {
       throw new ApiException(ApiErrCode.OPERATION_FAILED);
+    }
+    // 管理员可操作
+    if (nowUser.role !== USERROLRTYPE.ADMIN) {
+      throw new ApiException(ApiErrCode.NO_PERMISSIN);
     }
     const user = await this.userRepository.findOne({
       where: { userId },
