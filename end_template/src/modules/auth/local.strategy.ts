@@ -5,6 +5,7 @@ import { User } from 'src/modules/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApiErrCode, ApiException } from '../../core/exceptions/api.exception';
+import { STATUSTYPE } from 'src/enum';
 
 export class LocalStorage extends PassportStrategy(Strategy) {
   constructor(
@@ -19,7 +20,7 @@ export class LocalStorage extends PassportStrategy(Strategy) {
 
   async validate(userName: string, passWord: string) {
     const user = await this.userRepository.findOne({
-      where: { userName },
+      where: { userName, isDelete: STATUSTYPE.ACTIVE },
     });
     if (!user) {
       throw new ApiException(ApiErrCode.USER_NOT_EXIST);
