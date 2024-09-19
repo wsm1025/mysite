@@ -54,6 +54,8 @@ enum COMMONTYPE {
   OTHER = 'other',
 }
 
+const defaultPassword = '123456'
+
 export {
   STATUSTYPE,
   PARENTTYPE,
@@ -61,4 +63,5 @@ export {
   OPERATIONTYPE,
   OPERATIONTYPETEXT,
   COMMONTYPE,
+  defaultPassword
 };

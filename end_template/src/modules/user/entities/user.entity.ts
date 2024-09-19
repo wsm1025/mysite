@@ -8,7 +8,12 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
-import { OPERATIONTYPE, STATUSTYPE, USERROLRTYPE } from 'src/enum';
+import {
+  defaultPassword,
+  OPERATIONTYPE,
+  STATUSTYPE,
+  USERROLRTYPE,
+} from 'src/enum';
 import { Length } from 'class-validator';
 
 @Entity('user')
@@ -86,8 +91,7 @@ export class User {
 
   @BeforeInsert()
   async encryptPwd() {
-    if (!this.passWord) return;
-    this.passWord = await bcrypt.hashSync(this.passWord);
+    this.passWord = await bcrypt.hashSync(this.passWord || defaultPassword);
   }
 
   @BeforeInsert()

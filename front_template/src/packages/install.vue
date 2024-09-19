@@ -17,7 +17,7 @@
     </n-config-provider>
 </template>
 <script lang="ts">
-import { computed, defineComponent, reactive } from "vue"
+import { computed, defineComponent, Plugin, reactive } from "vue"
 import { darkTheme, GlobalThemeOverrides } from "naive-ui"
 import { zhCN, dateZhCN } from "naive-ui"
 import appStore from "@/packages/pinia/app.ts"
@@ -56,6 +56,9 @@ const install = (app: App, options?: any) => {
     app.config.globalProperties["configOptions"] = configOptions
     app.provide("configOptions", readonly(configOptions))
     app.provide("$mitt", emitter)
+    Object.values(options.components).forEach((e: Plugin) => {
+        app.use(e)
+    })
     axios.$configOptions = configOptions
     axios.$router = router
     setupPinia(app)

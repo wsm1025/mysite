@@ -55,19 +55,15 @@ http.interceptors.response.use(
             }
             if (code >= 400) {
                 window.$message.error(msg)
+                // http.$router.push(http.$configOptions.resetPath)
                 return Promise.reject(response)
             }
             return response.data.data
-        }
-        if (code === 1003) {
-            http.$router.push(http.$configOptions.resetPath)
         }
         return Promise.reject(response)
     },
     (err: AxiosError) => {
         const { response } = err
-
-        console.log(response.data)
         if (response?.data) {
             // @ts-ignore
             const { msg } = response?.data
@@ -91,4 +87,16 @@ const deleteAction = (
 ) => {
     return http.delete(url, { params, ...config })
 }
-export { post, get, deleteAction, http as axios }
+
+const upload = (url, file, headers = {}) => {
+    const formData = new FormData()
+    formData.append("file", file)
+    return http.post(url, formData, {
+        headers: {
+            ...headers,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`, // 确保使用正确的大小写
+        },
+    })
+}
+
+export { post, get, deleteAction, upload, http as axios }

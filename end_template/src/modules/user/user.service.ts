@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiException, ApiErrCode } from '../../core/exceptions/api.exception';
 import { User } from './entities/user.entity';
@@ -11,6 +11,7 @@ import {
   USERROLRTYPE,
 } from 'src/enum';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ListBackDto } from 'src/dto/list-back-dto';
 
 @Injectable()
 export class UserService {
@@ -80,15 +81,15 @@ export class UserService {
     return null;
   }
 
-  async findAll(query) {
+  async findAll(query): Promise<ListBackDto> {
     const { size = 10, page = 1, role = '', userName = '' } = query;
     const where = {
       isDelete: STATUSTYPE.ACTIVE,
-      ...(role && { role }),
-      ...(userName && { userName }),
+      ...(role && { role: Like(`%${role}%`) }), // 模糊匹配角色
+      ...(userName && { userName: Like(`%${userName}%`) }), // 模糊匹配用户名
     };
     const startSize = (Number(page) - 1) * Number(size) ?? 0;
-    const [data, total] = await this.userRepository.findAndCount({
+    const [record, total] = await this.userRepository.findAndCount({
       where,
       skip: startSize, // 跳过多少条
       take: size, // 获取多少条
@@ -97,7 +98,9 @@ export class UserService {
       },
     });
     return {
-      data,
+      page: Number(page),
+      size: Number(size),
+      record,
       total,
     };
   }

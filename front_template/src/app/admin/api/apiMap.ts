@@ -3,7 +3,7 @@ export default {
     deleteUser: "/user/deleteUser",
     editUser: "/user/editUser",
     uploadFile: "/common/uploadFile",
-    createUser: "/user/createUser",
+    createUser: "/user/register",
     operationList: "/user/operationList",
     role: "/role",
     branch: "/branch",

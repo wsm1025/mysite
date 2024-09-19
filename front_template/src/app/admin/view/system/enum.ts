@@ -1,6 +1,9 @@
 export enum TYPE {
-    ADD = 0,
-    EDIT = 1,
+    LIST = 0,
+    ADD = 1,
+    EDIT = 2,
+    DELETE = 3,
+    GETONE = 4,
 }
 export enum ROLE {
     ROLE_USER = "用户",

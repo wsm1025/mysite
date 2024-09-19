@@ -56,10 +56,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
             : exceptionResponse.message,
       });
     } else if (exception instanceof QueryFailedError) {
-      // 数据库查询失败
+      // 数据库失败
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         code: HttpStatus.INTERNAL_SERVER_ERROR,
-        msg: `数据库查询失败，请稍后重试,ERROR: ${exception.message}`,
+        msg: `数据库操作失败，请稍后重试,${exception.message}`,
       });
     } else {
       // 其他异常

@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
+import { BeforeInsert } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
+import { defaultPassword } from 'src/enum';
 
 export class CreateUserDto {
   @ApiProperty({ description: '用户名' })
@@ -7,8 +10,8 @@ export class CreateUserDto {
   userName: string;
 
   @ApiProperty({ description: '密码' })
-  @IsNotEmpty({ message: '密码不能为空' })
-  passWord: string;
+  @IsOptional()
+  passWord?: string;
 
   @ApiProperty({ description: '用户角色' })
   role: string;
@@ -18,4 +21,9 @@ export class CreateUserDto {
 
   @ApiProperty({ description: '用户邮箱' })
   email: string;
+
+  @BeforeInsert()
+  async encryptPwd() {
+    this.passWord = await bcrypt.hashSync(this.passWord || defaultPassword);
+  }
 }

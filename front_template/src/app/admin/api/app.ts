@@ -1,8 +1,8 @@
-import { get, post, deleteAction } from "@/packages/http/request.ts"
+import { get, post, deleteAction, upload } from "@/packages/http/request.ts"
 import apiMap from "@/app/admin/api/apiMap.ts"
 
-const uploadFile = () => {
-    return "/api" + apiMap.uploadFile
+const uploadFile = (file, headers = {}) => {
+    return upload(apiMap.uploadFile, file, headers)
 }
 
 const findDicByParentName = (name, params = {}) => {

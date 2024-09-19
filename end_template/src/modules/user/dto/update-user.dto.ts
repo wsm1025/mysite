@@ -4,7 +4,7 @@ export class UpdateUserDto {
   userId: string;
 
   @IsOptional()
-  @Length(3, 10, {
+  @Length(0, 10, {
     message: `昵称长度必须是$constraint1到$constraint2之间`,
   })
   nickName?: string;
