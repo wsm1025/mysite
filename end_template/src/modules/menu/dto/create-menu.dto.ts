@@ -10,20 +10,20 @@ import {
 export class CreateMenuDto {
   @IsString()
   @IsNotEmpty({ message: '菜单名不能为空' })
-  @Length(3, 20, {
+  @Length(1, 20, {
     message: `菜单名称长度必须是$constraint1到$constraint2之间`,
   })
   title: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'path必须是字符串' })
   path?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'file必须是字符串' })
   file?: string;
 
-  @IsString()
+  @IsString({ message: 'icon必须是字符串' })
   @IsNotEmpty({ message: 'icon不能为空' })
   icon: string;
 
@@ -32,7 +32,7 @@ export class CreateMenuDto {
   isIframe: boolean;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'url必须是字符串' })
   url?: string;
 
   @IsBoolean({ message: 'shows必须是 true 或 false' })

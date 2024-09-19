@@ -7,12 +7,12 @@ import {
 } from 'class-validator';
 
 export class UpdateMenuDto {
-  @IsString()
+  @IsString({ message: '菜单id必须为字符串' })
   @IsNotEmpty()
   id: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: '菜单名称必须为字符串' })
   title?: string;
 
   @IsOptional()

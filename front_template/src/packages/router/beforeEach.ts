@@ -36,7 +36,7 @@ function addRouter(item) {
     }
     if (component) {
         router.addRoute(item.namespace ? item.namespace : namespace, {
-            path: item.path,
+            path: item.path || "",
             name: item.name,
             component: component,
             meta: item,

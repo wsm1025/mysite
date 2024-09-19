@@ -6,6 +6,7 @@ import { NaiveUiResolver } from "unplugin-vue-components/resolvers"
 import setupConfig from "./config"
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js"
 import viteCompression from "vite-plugin-compression"
+import vueJsx from "@vitejs/plugin-vue-jsx"
 
 export default ({ mode }: { mode: any }) => {
     const { build } = setupConfig({ mode })
@@ -24,6 +25,7 @@ export default ({ mode }: { mode: any }) => {
         base: "./",
         plugins: [
             vue(),
+            vueJsx(),
             Components({
                 resolvers: [NaiveUiResolver()],
             }),

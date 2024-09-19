@@ -50,12 +50,8 @@
 import { NButton } from "naive-ui"
 import useMember from "./useMember"
 import { TYPE } from "../enum"
-import { TableInstance } from "naive-ui-table"
-import { ref } from "vue"
 const {
     loading,
-    roleOptions,
-    operationOptions,
     search,
     columns,
     showModal,
@@ -64,7 +60,6 @@ const {
     schemas,
     handleSubmit,
     fun,
-    deal,
     getTableList,
     naiveUiTableRef,
 } = useMember()

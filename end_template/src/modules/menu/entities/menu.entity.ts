@@ -11,7 +11,7 @@ export class Menu extends CommonEntity {
 
   @Column({ type: 'varchar', length: 20 })
   @IsNotEmpty({ message: '菜单名不能为空' })
-  @Length(3, 20, {
+  @Length(1, 20, {
     message: `菜单名称长度必须是$constraint1到$constraint2之间`,
   })
   title: string;
@@ -51,8 +51,6 @@ export class Menu extends CommonEntity {
   @Column({ type: 'int', default: 0 })
   order: number;
 
-  // 需要的权限
-  @Exclude()
   @Column({ type: 'varchar', length: 20, nullable: true, default: null })
   permission?: string | null;
 

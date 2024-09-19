@@ -1,127 +1,97 @@
 <template>
-    <n-grid cols="24" x-gap="10" item-responsive responsive="screen">
-        <n-grid-item span="24 m:24 l:24">
-            <n-space :wrap-item="false">
-                <n-card
-                    :segmented="{ content: true, footer: true }"
-                    header-style="padding:0"
-                    footer-style="padding:10px"
-                    content-style="padding:0px;"
+    <div>
+        <NaiveUiTable
+            ref="naiveUiTableRef"
+            :columns="columns"
+            :requestApi="getTableList"
+            striped
+            :isPageApi="false"
+            :dataCallback="dataCallback"
+        >
+            <template #tableHeader>
+                <n-button
+                    size="small"
+                    type="primary"
+                    @click="fun(TYPE.ADD, {})"
                 >
-                    <template #header>
-                        <n-space justify="start" style="padding: 10px">
-                            <n-button
-                                type="primary"
-                                @click="compHandle.action(TYPE.ADD)"
-                            >
-                                新增
-                            </n-button>
-                            <n-popover trigger="click" placement="bottom">
-                                <template #trigger>
-                                    <n-button strong secondary type="info">
-                                        设置表列
-                                    </n-button>
-                                </template>
-                                <n-checkbox-group
-                                    v-model:value="compData.columnsOptionsValue"
-                                    @update:value="
-                                        compHandle.handleColumnsOptions
-                                    "
-                                >
-                                    <n-space vertical align="start">
-                                        <n-checkbox
-                                            v-for="item in compData.columnsOptions"
-                                            :key="item.value"
-                                            :value="item.key"
-                                            :label="item.title"
-                                            :disabled="item.disabled"
-                                        ></n-checkbox>
-                                    </n-space>
-                                </n-checkbox-group>
-                            </n-popover>
-                        </n-space>
+                    新增
+                </n-button>
+            </template>
+            <template #operation="row, index">
+                <n-button
+                    size="small"
+                    type="primary"
+                    ghost
+                    @click="fun(TYPE.EDIT, row)"
+                >
+                    编辑
+                </n-button>
+                <n-popconfirm @positive-click="fun(TYPE.DELETE, row)">
+                    <template #trigger>
+                        <n-button type="error" size="small" ghost>
+                            删除
+                        </n-button>
                     </template>
-                    <n-data-table
-                        :bordered="false"
-                        :bottom-bordered="false"
-                        :columns="compData.columns"
-                        :data="compData.tableData"
-                        :pagination="compData.pagination"
-                        :single-line="false"
-                        :loading="compData.loading"
-                        :default-expanded-row-keys="[200]"
-                    />
-                    <template #footer>
-                        <n-pagination
-                            v-model:page="compData.tablePage"
-                            :page-count="1"
-                            size="large"
-                            show-quick-jumper
-                            show-size-picker
-                            style="justify-content: flex-end; flex: 1"
-                        />
+                    确认删除该条数据嘛？
+                </n-popconfirm>
+            </template>
+        </NaiveUiTable>
+        <ModalForm
+            v-model:show="showModal"
+            :schemas="schemas"
+            ref="modalFormRef"
+            :title="title == TYPE.ADD ? '新增菜单' : '编辑菜单'"
+            :loading="loading"
+            @submit="handleSubmit"
+        >
+            <template #icon="{ formValue, field }">
+                <n-button
+                    :circle="Boolean(formValue.icon?.length)"
+                    @click="selectIcon"
+                >
+                    <template #icon v-if="formValue.icon">
+                        <n-icon>
+                            <component :is="formValue.icon" />
+                        </n-icon>
                     </template>
-                </n-card>
-            </n-space>
-            <Modal ref="modelRef" @success="() => compHandle.getTableData()" />
-        </n-grid-item>
-    </n-grid>
+                    <template v-if="!formValue.icon"> 请选择图标 </template>
+                </n-button>
+                <ChooseIcon ref="chooseIconRef" @choose="chooseEmit" />
+            </template>
+        </ModalForm>
+    </div>
 </template>
 
-<script lang="ts" setup>
-import { reactive, ref } from "vue"
-import { menus } from "@/app/admin/api/app.ts"
-import { toTree } from "@/packages/utils/utils.ts"
-import Modal from "./components/modal.vue"
-import { createMenu, menuFiled, menuDelete } from "@api/app.ts"
-import { createColumns } from "./data"
+<script lang="tsx" setup>
+import { NButton } from "naive-ui"
+import useMenu from "./useMenu"
 import { TYPE } from "../enum"
+import ChooseIcon from "@components/chooseIcon.vue"
+import { ref } from "vue"
 
-const modelRef = ref()
+const {
+    loading,
+    columns,
+    showModal,
+    title,
+    modalFormRef,
+    schemas,
+    handleSubmit,
+    fun,
+    getTableList,
+    dataCallback,
+    naiveUiTableRef,
+} = useMenu()
+const chooseIconRef = ref()
 
-const compData = reactive({
-    tableData: [],
-    tablePage: 1,
-    loading: true,
-    columns: [],
-    sourceColumns: [],
-    columnsOptions: [],
-    columnsOptionsValue: [],
-    pagination: false,
-})
-const compHandle = reactive({
-    getTableData() {
-        compData.loading = true
-        menus()
-            .then((res) => {
-                compData.tableData = toTree({ arr: res })
-            })
-            .finally(() => {
-                compData.loading = false
-            })
-    },
-    action(type, data = {}) {
-        const method = type === TYPE.ADD ? createMenu : menuFiled
-        modelRef.value.init(type, data, method)
-    },
-    handleColumnsOptions(value: (string | number)[]) {
-        compData.columns = compData.sourceColumns.filter(
-            (item) => value.indexOf(item.key) !== -1
-        )
-    },
-    menuDelete,
-    menuFiled,
-})
-compData.sourceColumns = createColumns({ compHandle })
-compData.columns = compData.sourceColumns
-compData.columnsOptionsValue = compData.sourceColumns.map((item) => item.key)
-compData.columnsOptions = compData.sourceColumns
-    .filter((item) => item.type !== "selection")
-    .map((item) => {
-        if (item.key === "actions") {
-            item.disabled = true
-        }
-        return item
+const selectIcon = () => {
+    chooseIconRef.value.visible = true
+}
+const chooseEmit = (item) => {
+    modalFormRef.value.setValue({
+        ...modalFormRef.value.getValue(),
+        icon: item.name,
     })
-compHandle.getTableData()
+    modalFormRef.value?.validate(["icon"])
+}
 </script>

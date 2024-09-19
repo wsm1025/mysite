@@ -21,7 +21,7 @@ import { computed, h, nextTick, ref, type Ref } from "vue"
 import dayjs from "dayjs"
 import { ROLE, TYPE } from "../enum"
 import { validateEmail } from "@/packages/utils/utils.ts"
-export default function useForm() {
+export default function useMember() {
     const roleOptions = ref([])
     const operationOptions = ref([])
 
@@ -227,8 +227,6 @@ export default function useForm() {
 
     return {
         loading,
-        roleOptions,
-        operationOptions,
         search,
         columns,
         showModal,
@@ -237,7 +235,6 @@ export default function useForm() {
         schemas,
         handleSubmit,
         fun,
-        deal,
         getTableList,
         naiveUiTableRef,
     }
