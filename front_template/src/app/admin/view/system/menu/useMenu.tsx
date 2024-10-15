@@ -10,7 +10,7 @@ import {
 import { computed, h, nextTick, ref } from "vue"
 import { TYPE } from "../enum"
 import { toTree } from "@/packages/utils/utils.ts"
-import { NIcon, NSwitch } from "naive-ui"
+import { NIcon, NSelect, NSwitch } from "naive-ui"
 import { icons } from "@/packages/config/icon"
 import appPinia from "@/packages/pinia/app.ts"
 
@@ -24,7 +24,7 @@ export default function useMenu() {
         }))
     })
     const columns: TableColumns = [
-        { title: "菜单名称", key: "title", align: "center" },
+        { title: "菜单名称", key: "title", align: "left", width: 180 },
         {
             title: "路由",
             key: "path",
@@ -70,7 +70,6 @@ export default function useMenu() {
             title: "是否外链",
             key: "isIframe",
             align: "center",
-            width: 80,
             render: (row) => (
                 <NSwitch value={row.isIframe ? row.isIframe : "-"} disabled />
             ),
@@ -79,30 +78,25 @@ export default function useMenu() {
             title: "外链地址",
             key: "url",
             align: "center",
-            width: 80,
             render: (row) => h("span", null, row.url || "-"),
         },
         {
             title: "是否固定",
             key: "tabFix",
             align: "center",
-            fixed: "right",
-            width: 80,
             render: (row) => <NSwitch value={row.tabFix} disabled />,
         },
         {
             title: "显示tab",
             key: "tabHidden",
             align: "center",
-            fixed: "right",
-            width: 80,
             render: (row) => <NSwitch value={row.tabHidden} disabled />,
         },
         {
             title: "操作",
             key: "operation",
-            fixed: "right",
             align: "center",
+            fixed: "right",
             width: 200,
         },
     ]
@@ -134,11 +128,16 @@ export default function useMenu() {
         {
             field: "pid",
             label: "父级",
-            type: "select",
+            type: "custom",
             required: true,
             vif: (row) => row.parentType === "0",
-            componentProps: {
-                options: menuList.value,
+            render(formValue, field) {
+                return {
+                    type: NSelect,
+                    componentProps: {
+                        options: menuList(formValue["title"]),
+                    },
+                }
             },
         },
         {
@@ -146,30 +145,38 @@ export default function useMenu() {
             label: "菜单名称",
             type: "input",
             required: true,
-            maxlength: "10",
+            componentProps: {
+                disabled: title.value === TYPE.EDIT,
+                maxlength: "10",
+            },
         },
         {
             field: "path",
             label: "路由",
             type: "input",
             required: true,
-            maxlength: "15",
+            componentProps: {
+                maxlength: "15",
+            },
         },
         {
             field: "file",
             label: "文件地址",
             type: "input",
-            maxlength: "20",
+            componentProps: {
+                maxlength: "20",
+            },
         },
         {
             field: "icon",
             label: "图标",
             type: "slot",
             required: true,
-            maxlength: "20",
+            componentProps: {
+                maxlength: "20",
+            },
             slot: "icon",
         },
-
         {
             field: "shows",
             label: "是否显示",
@@ -247,15 +254,15 @@ export default function useMenu() {
     ])
     const appStore = appPinia()
 
-    const menuList = ref(
-        // .filter((e) => e.path == model.value.form.path)
-        appStore.treeMenus
+    const menuList = (title) => {
+        return appStore.treeMenus
             .filter((e) => e.path !== "/home")
+            .filter((e) => e.title !== title)
             .map((e) => ({
                 label: e.title,
                 value: e.id,
             }))
-    )
+    }
     async function handleSubmit(values: Recordable) {
         loading.value = true
         await apiMap[title.value]({
@@ -274,7 +281,7 @@ export default function useMenu() {
     async function fun(type, { row = {} }) {
         title.value = type
         if (type === TYPE.DELETE) {
-            await menuDelete({
+            await apiMap[TYPE.DELETE]({
                 id: row.id,
             })
             window?.$message.success("删除成功")
@@ -287,13 +294,12 @@ export default function useMenu() {
         }
     }
     function deal(row) {
-        row = {
+        return {
             ...row,
             pid: row.pid || undefined,
             permission: (row.permission || "").split(",").filter(Boolean),
             parentType: !row.pid ? "1" : "0",
         }
-        return row
     }
 
     async function getTableList(params: any) {

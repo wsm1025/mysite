@@ -56,6 +56,10 @@ export class CreateMenuDto {
   order: number;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'permission必须是字符串' })
   permission?: string;
+
+  @IsOptional()
+  @IsString({ message: 'pid必须是字符串' })
+  pid?: string;
 }

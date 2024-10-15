@@ -1,4 +1,3 @@
-import { IsNotEmpty } from 'class-validator';
 import { PARENTTYPE, STATUSTYPE } from 'src/enum';
 
 export class UpdateDictionaryDto {
@@ -6,6 +5,6 @@ export class UpdateDictionaryDto {
   status: STATUSTYPE;
   dictionaryName: string;
   dictionaryDesc?: string;
-  parentId?: string;
+  pid?: string;
   parentType: PARENTTYPE;
 }

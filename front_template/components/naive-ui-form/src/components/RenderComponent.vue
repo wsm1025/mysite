@@ -94,6 +94,15 @@
     v-bind="schema.componentProps"
     v-model:value="record[schema.field]"
   ></component>
+
+  <component
+    v-else-if="schema.type === 'custom'"
+    :is="schema.render(record,schema.field).type"
+    :style="schema?.style"
+    v-bind="schema.render(record,schema.field).componentProps"
+    v-model:value="record[schema.field]"
+  ></component>
+  
   <component
     v-else
     :is="`n-${schema.type}`"

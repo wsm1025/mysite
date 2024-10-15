@@ -27,72 +27,83 @@
                 ></slot>
             </template>
         </BasicForm>
-
-        <div class="table-main">
-            <!-- 表格头部，操作按钮 -->
-            <div class="table-header">
-                <div class="table-header-left">
-                    <slot name="tableHeader"></slot>
-                </div>
-                <n-space class="table-header-right">
-                    <slot name="toolButton"> </slot>
-                    <template v-if="toolButton">
-                        <!-- 刷新 -->
-                        <n-tooltip v-if="showToolButton('refresh')">
-                            <template #trigger>
-                                <n-button circle @click="refresh">
-                                    <template #icon>
-                                        <n-icon>
-                                            <SyncOutline />
-                                        </n-icon>
-                                    </template>
-                                </n-button>
-                            </template>
-                            <span>刷新</span>
-                        </n-tooltip>
-
-                        <!-- 密度 -->
-                        <n-tooltip
-                            trigger="hover"
-                            v-if="showToolButton('size')"
-                        >
-                            <template #trigger>
-                                <div>
-                                    <n-dropdown
-                                        trigger="click"
-                                        :options="densityOptions"
-                                        :value="tableSize"
-                                        @select="(key) => (tableSize = key)"
-                                    >
-                                        <n-button circle>
+        <n-card
+            :segmented="{ content: true, footer: true }"
+            header-style="padding:10px 30px"
+        >
+            <template #header>
+                <div class="table-main">
+                    <!-- 表格头部，操作按钮 -->
+                    <div class="table-header">
+                        <div class="table-header-left">
+                            <slot name="tableHeader"></slot>
+                        </div>
+                        <n-space class="table-header-right">
+                            <slot name="toolButton"> </slot>
+                            <template v-if="toolButton">
+                                <!-- 刷新 -->
+                                <n-tooltip v-if="showToolButton('refresh')">
+                                    <template #trigger>
+                                        <n-button circle @click="refresh">
                                             <template #icon>
-                                                <n-icon
-                                                    ><BarbellOutline
-                                                /></n-icon>
+                                                <n-icon>
+                                                    <SyncOutline />
+                                                </n-icon>
                                             </template>
                                         </n-button>
-                                    </n-dropdown>
-                                </div>
-                            </template>
-                            <span>密度</span>
-                        </n-tooltip>
-
-                        <!-- 设置 -->
-                        <n-tooltip v-if="showToolButton('setting')">
-                            <template #trigger>
-                                <n-button circle @click="openDrawer(true)">
-                                    <template #icon>
-                                        <n-icon>
-                                            <SettingsOutline />
-                                        </n-icon>
                                     </template>
-                                </n-button>
+                                    <span>刷新</span>
+                                </n-tooltip>
+
+                                <!-- 密度 -->
+                                <n-tooltip
+                                    trigger="hover"
+                                    v-if="showToolButton('size')"
+                                >
+                                    <template #trigger>
+                                        <div>
+                                            <n-dropdown
+                                                trigger="click"
+                                                :options="densityOptions"
+                                                :value="tableSize"
+                                                @select="
+                                                    (key) => (tableSize = key)
+                                                "
+                                            >
+                                                <n-button circle>
+                                                    <template #icon>
+                                                        <n-icon
+                                                            ><BarbellOutline
+                                                        /></n-icon>
+                                                    </template>
+                                                </n-button>
+                                            </n-dropdown>
+                                        </div>
+                                    </template>
+                                    <span>密度</span>
+                                </n-tooltip>
+
+                                <!-- 设置 -->
+                                <n-tooltip v-if="showToolButton('setting')">
+                                    <template #trigger>
+                                        <n-button
+                                            circle
+                                            @click="openDrawer(true)"
+                                        >
+                                            <template #icon>
+                                                <n-icon>
+                                                    <SettingsOutline />
+                                                </n-icon>
+                                            </template>
+                                        </n-button>
+                                    </template>
+                                    <span>列设置</span>
+                                </n-tooltip>
                             </template>
-                            <span>列设置</span>
-                        </n-tooltip>
-                    </template>
-                </n-space>
-            </div>
+                        </n-space>
+                    </div>
+                </div>
+            </template>
 
             <!-- 表格主体 -->
             <n-data-table
@@ -111,14 +122,14 @@
                 :scroll-x="scrollWidth"
                 v-bind="$attrs"
             />
+        </n-card>
 
-            <!-- 列设置 -->
-            <n-drawer v-model:show="active" :width="502" placement="right">
-                <n-drawer-content title="列设置" closable>
-                    <ColumnSetting v-model:columns="initColumns" />
-                </n-drawer-content>
-            </n-drawer>
-        </div>
+        <!-- 列设置 -->
+        <n-drawer v-model:show="active" :width="502" placement="right">
+            <n-drawer-content title="列设置" closable>
+                <ColumnSetting v-model:columns="initColumns" />
+            </n-drawer-content>
+        </n-drawer>
     </div>
 </template>
 
@@ -341,7 +352,6 @@ defineExpose({
     .table-header {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 10px;
     }
 }
 

@@ -46,34 +46,39 @@ export default function useMember() {
         }
     })
     const columns: TableColumns = [
-        { title: "用户名", key: "userName" },
+        { title: "用户名", key: "userName", align: "center" },
         {
             title: "昵称",
             key: "nickName",
             render: (row) => row.nickName || "-",
+            align: "center",
         },
         {
             title: "邮箱",
             key: "email",
             render: (row) => h("span", {}, row.email || "-"),
+            align: "center",
         },
         {
             title: "创建时间",
             key: "createTime",
             render: (row) =>
                 dayjs(row.createTime).format("YYYY-MM-DD HH:mm:ss") || "-",
+            align: "center",
         },
         {
             title: "更新时间",
             key: "updateTime",
             render: (row) =>
                 dayjs(row.updateTime).format("YYYY-MM-DD HH:mm:ss") || "-",
+            align: "center",
         },
         {
             title: "角色",
             key: "opreration",
             width: 80,
             render: (row) => h("span", {}, ROLE[row.role]),
+            align: "center",
         },
         {
             title: "操作",

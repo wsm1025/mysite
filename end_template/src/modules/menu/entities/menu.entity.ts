@@ -32,7 +32,7 @@ export class Menu extends CommonEntity {
   url?: string;
 
   @Column({ type: 'varchar', nullable: true, default: '' })
-  pid?: any;
+  pid?: string;
 
   @Column({ type: 'boolean', default: true, nullable: true })
   shows?: boolean;

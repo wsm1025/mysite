@@ -47,9 +47,9 @@ export class Dictionary extends CommonEntity {
   @IsEnum(STATUSTYPE, { message: 'status 必须是 0 或者 1' })
   status: STATUSTYPE;
 
-  @Column({ name: 'parent_id', nullable: true })
+  @Column({ name: 'pid', nullable: true })
   @IsNotEmpty({ message: '父级id不能为空' })
-  parentId: string | null;
+  pid: string | null;
 
   @Column({
     name: 'parent_type',

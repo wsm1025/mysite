@@ -8,7 +8,6 @@ import { ApiErrCode, ApiException } from 'src/core/exceptions/api.exception';
 import { UserInfoDto } from '../user/dto/user-info.dto';
 import { STATUSTYPE, USERROLRTYPE } from 'src/enum';
 import { DeleteMenuDto } from './dto/delete-menu.dto';
-import { ListBackDto } from 'src/dto/list-back-dto';
 function creataDataItem(data = {}) {
   const item = {
     title: '首页',
@@ -64,7 +63,6 @@ export class MenuService {
 
   async updateField(updateMenuDto: UpdateMenuDto, userInfo: UserInfoDto) {
     const { id, ...updateData } = updateMenuDto;
-
     const result = await this.menuRepository.update(id, {
       ...updateData,
       updateBy: userInfo.userName,

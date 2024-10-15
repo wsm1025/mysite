@@ -53,7 +53,7 @@ export class DictionaryService {
       where: [
         { dictionaryValue: name, isDelete: STATUSTYPE.ACTIVE },
         {
-          parentId: (
+          pid: (
             await this.dictionaryRepository.findOne({
               where: { dictionaryValue: name, isDelete: STATUSTYPE.ACTIVE },
             })
@@ -62,10 +62,10 @@ export class DictionaryService {
         },
       ],
     });
-    return list.filter((e) => Boolean(e.parentId));
+    return list.filter((e) => Boolean(e.pid));
   }
 
-  async findAll(parentType = '0,1', keyWord?: string) {
+  async findAll(parentType = '0,1', keyWord?: string){
     const splitParentType = parentType.split(',');
     // 初始化查询条件
     const query = this.dictionaryRepository
@@ -95,10 +95,10 @@ export class DictionaryService {
     let columns = await query.getMany();
     if (splitParentType?.length === 2) {
       columns
-        .filter((item) => item.parentId)
+        .filter((item) => item.pid)
         .forEach((item) => {
           const parent = columns.find(
-            (parent) => parent.id === item.parentId,
+            (parent) => parent.id === item.pid,
           ) as any;
           if (parent) {
             if (!parent.children) {
@@ -107,12 +107,9 @@ export class DictionaryService {
             parent.children.push(item);
           }
         });
-      columns = columns.filter((item) => !item.parentId);
+      columns = columns.filter((item) => !item.pid);
     }
-    return {
-      columns,
-      total: columns.length,
-    };
+    return columns
   }
 
   async updateDelete(id: string) {
@@ -126,7 +123,7 @@ export class DictionaryService {
   }
 
   async updateField(id: string, body: UpdateDictionaryDto) {
-    const { status, dictionaryName, dictionaryDesc, parentType, parentId } =
+    const { status, dictionaryName, dictionaryDesc, parentType, pid } =
       body;
     const record = await this.dictionaryRepository.findOne({
       where: [{ id, isDelete: STATUSTYPE.ACTIVE }],
@@ -136,16 +133,16 @@ export class DictionaryService {
       ...(dictionaryDesc && { dictionaryDesc }),
       ...(status && { status }),
       ...(parentType && { parentType }),
-      parentId,
+      pid,
     };
     const column = await this.dictionaryRepository.update({ id }, updateData);
     if (
       record.parentType == PARENTTYPE.FATHRER &&
       status == STATUSTYPE.INACTIVE
     ) {
-      // 更新所有parentId=id的字典
+      // 更新所有pid=id的字典
       await this.dictionaryRepository.update(
-        { parentId: id },
+        { pid: id },
         { status: STATUSTYPE.INACTIVE },
       );
     }

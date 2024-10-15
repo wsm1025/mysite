@@ -2,14 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ListBackDto {
   @ApiProperty({ description: 'page' })
-  page: number = 1;
+  page?: number = 1;
 
   @ApiProperty({ description: 'size' })
-  size: number = 10;
+  size?: number = 10;
 
   @ApiProperty({ description: 'total' })
-  total: number = 0;
+  total?: number = 0;
 
   @ApiProperty({ description: 'record' })
-  record: Array<any>;
+  record?: Array<any>;
 }

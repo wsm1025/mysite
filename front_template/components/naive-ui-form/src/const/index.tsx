@@ -1,3 +1,5 @@
+import type { FormSchema, Recordable } from "src/types"
+
 export const componentMapInfo = {
   text: {
     outputStr: '输入'
@@ -75,17 +77,17 @@ export const componentMapInfo = {
   'tree-select': {
     outputStr: '勾选'
   },
-  // custom: {
-  //   outputStr: '填写',
-  //   render(formValue: Recordable, schema: FormSchema) {
-  //     if (!schema.render || typeof schema.render !== 'function') {
-  //       console.error('render 必须是一个函数')
-  //       return null
-  //     }
+  custom: {
+    outputStr: '填写',
+    render(formValue: Recordable, schema: FormSchema) {
+      if (!schema.render || typeof schema.render !== 'function') {
+        console.error('render 必须是一个函数')
+        return null
+      }
 
-  //     return schema.render(formValue, schema.field)
-  //   }
-  // },
+      return schema.render(formValue, schema.field)
+    }
+  },
   slot: {
     outputStr: '填写'
   },

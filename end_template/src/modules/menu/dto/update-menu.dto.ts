@@ -58,4 +58,8 @@ export class UpdateMenuDto {
   @IsOptional()
   @IsString()
   permission?: string;
+
+  @IsOptional()
+  @IsString()
+  pid?: string;
 }

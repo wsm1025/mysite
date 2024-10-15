@@ -21,7 +21,7 @@ export class CreateDictionaryDto extends CommonEntity {
 
   @ApiProperty({ description: '父级id' })
   @IsOptional()
-  parentId?: string | null;
+  pid?: string | null;
 
   @ApiProperty({
     description: '父类',
